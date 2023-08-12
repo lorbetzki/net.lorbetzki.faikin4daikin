@@ -1,0 +1,15 @@
+{
+    "elements": [
+        { 
+            "type": "Label",
+            "caption": "The hostname corresponds to the topic name"
+        },
+        { 
+            "type": "ValidationTextBox", 
+            "name": "Hostname",
+            "caption": "Hostname of the module" 
+        }
+    ],
+    "actions": [],
+    "status": []
+}

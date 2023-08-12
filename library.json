@@ -1,0 +1,12 @@
+{
+    "id": "{DB6223E5-45DC-F5D8-EAED-0042CA3EEFA3}",
+    "name": "Faikin 4 Daikin",
+    "author": "Kristian Lorbetzki",
+    "url": "https://github.com/lorbetzki/net.lorbetzki.faikin4daikin.git",
+    "compatibility": {
+        "version": "7.0"
+    },
+    "version": "0.1",
+    "build": 20230812,
+    "date": 0
+}
