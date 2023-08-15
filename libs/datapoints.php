@@ -29,20 +29,20 @@ $DPStatus = [
 //state/hostname
 $DPState = [
     ['ts',              $this->Translate('Timestamp'),                                                                                                                            'INT', '', false, true],
-    ['id',              $this->Translate('ID'),                                                                                                                                   'STRING', '', false, false],
-    ['up',              $this->Translate('uptime'),                                                                                                                               'INT', '~UnixTimestampTime', false, false],
+    ['id',              $this->Translate('ID'),                                                                                                                                   'STRING', '', false, true],
+    ['up',              $this->Translate('uptime'),                                                                                                                               'INT', '~UnixTimestampTime', false, true],
     ['app',             $this->Translate('App'),                                                                                                                                  'STRING', '', false, true],
-    ['version',         $this->Translate('Version'),                                                                                                                              'STRING', '', false, false],
-    ['build-suffix',    $this->Translate('Firmwarebuild Suffix'),                                                                                                                  'STRING', '', false, false],
-    ['build',           $this->Translate('Firmwarebuild'),                                                                                                                        'STRING', '', false, false],
-    ['flash',           $this->Translate('flash used'),                                                                                                                           'INT', '', false, false],
+    ['version',         $this->Translate('Version'),                                                                                                                              'STRING', '', false, true],
+    ['build-suffix',    $this->Translate('Firmwarebuild Suffix'),                                                                                                                  'STRING', '', false, true],
+    ['build',           $this->Translate('Firmwarebuild'),                                                                                                                        'STRING', '', false, true],
+    ['flash',           $this->Translate('flash used'),                                                                                                                           'INT', '', false, true],
     ['rst',             $this->Translate('rst'),                                                                                                                                  'INT', '', false, true],
-    ['mem',             $this->Translate('memory used'),                                                                                                                          'INT', '', false, false],
-    ['spi',             $this->Translate('spi'),                                                                                                                                  'INT', '', false, false],
-    ['ssid',            $this->Translate('connected to SSID'),                                                                                                                    'STRING', '', false, false],
-    ['bssid',           $this->Translate('BBSid'),                                                                                                                                'STRING', '', false, false],
-    ['rssi',            $this->Translate('RSSi'),                                                                                                                                 'INT', '', false, false],
-    ['chan',            $this->Translate('Wifi Channel'),                                                                                                                         'INT', '', false, false],
+    ['mem',             $this->Translate('memory used'),                                                                                                                          'INT', '', false, true],
+    ['spi',             $this->Translate('spi'),                                                                                                                                  'INT', '', false, true],
+    ['ssid',            $this->Translate('connected to SSID'),                                                                                                                    'STRING', '', false, true],
+    ['bssid',           $this->Translate('BBSid'),                                                                                                                                'STRING', '', false, true],
+    ['rssi',            $this->Translate('RSSi'),                                                                                                                                 'INT', '', false, true],
+    ['chan',            $this->Translate('Wifi Channel'),                                                                                                                         'INT', '', false, true],
     ['ipv4',            $this->Translate('IP Address'),                                                                                                                           'STRING', '', false, false],
 ];
 
@@ -58,16 +58,16 @@ $DPInfo = [
 
 ];
 
-// setting/hostname
+// setting/hostname hide all of them, cause we put them in the configurationform
 $DPSetting = [
-    ['webcontrol',	    $this->Translate('Webcontrol'),                                                                                                                           'INT', 'FAIKIN_Webcontrol', true, false],
-    ['ha',              $this->Translate('send Home-Assistant message via MQTT'),                                                                                                 'BOOL', '~Switch', true, false],
-    ['reporting',       $this->Translate('reporting state in seconds'),                                                                                                           'INT', '',  true, false],
+    ['webcontrol',	    $this->Translate('Webcontrol'),                                                                                                                           'INT', 'FAIKIN_Webcontrol', true, true],
+    ['ha',              $this->Translate('send Home-Assistant message via MQTT'),                                                                                                 'BOOL', '~Switch', true, true],
+    ['reporting',       $this->Translate('reporting state in seconds'),                                                                                                           'INT', '',  true, true],
     ['dark',            $this->Translate('Shutdown LED'),                                                                                                                         'BOOL', '~Switch', true, false],
-    ['tmin',            $this->Translate('Min temperature'),                                                                                                                      'FLOAT', '~Temperature', true, false],
-    ['tmax',            $this->Translate('Max temperature'),                                                                                                                      'FLOAT', '~Temperature', true, false],
-    ['otahost',         $this->Translate('OTA URL'),                                                                                                                         'STRING', '', true, false],
-    ['otaauto',     	$this->Translate('OTA Autoupdate'),                                                                                                                      'INT', '', true, false],
+    ['tmin',            $this->Translate('Min temperature'),                                                                                                                      'FLOAT', '~Temperature', true, true],
+    ['tmax',            $this->Translate('Max temperature'),                                                                                                                      'FLOAT', '~Temperature', true, true],
+    ['otahost',         $this->Translate('OTA URL'),                                                                                                                         'STRING', '', true, true],
+    ['otaauto',     	$this->Translate('OTA Autoupdate'),                                                                                                                      'INT', '', true, true],
 ];
 
 $DPError = [

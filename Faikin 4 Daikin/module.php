@@ -13,6 +13,10 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 
 			$this->ConnectParent('{C6D2AEB3-6E1F-4B2E-8E69-3A1A00246850}'); //MQTT Server
 			$this->RegisterPropertyString('Hostname', '');
+			$this->RegisterPropertyBoolean('StatusEmu', 'true');
+			$this->RegisterAttributeInteger('setting_otaauto', '7');
+			$this->RegisterAttributeInteger('setting_reporting', '60');
+			$this->RegisterAttributeBoolean('setting_ha', 'true');
 
 			$this->RegisterProfileInteger("FAIKIN_rpm", "", "", " rpm", 0, 0, 0);
 
@@ -58,17 +62,29 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			$Hostname = $this->ReadPropertyString("Hostname");
 			
 			$this->SetReceiveDataFilter('.*' . $Hostname . '.*');
-			$this->RequestAction('reload_setting','');
+
+			if (($Hostname) AND $this->Getstatus() == 102)
+			{
+				$this->RequestAction('reload_setting','');
+			}
 		}
 
+	
 		public function GetConfigurationForm()
 		{
 			$jsonForm = json_decode(file_get_contents(__DIR__ . "/form.json"), true);
 
-			//$Hostname = $this->ReadPropertyString('Hostname');
-			
+			if ($this->Getstatus() == 102 )
+			{
+				$jsonForm["actions"][0]["items"][0]["value"] = $this->ReadAttributeInteger('setting_otaauto');
+				$jsonForm["actions"][0]["items"][1]["value"] = $this->ReadAttributeInteger('setting_reporting');
+				$jsonForm["actions"][0]["items"][2]["value"] = $this->ReadAttributeBoolean('setting_ha');
+
+			}
+
 			return json_encode($jsonForm);
 		}
+	
 
 		public function ReceiveData($JSONString)
 		{
@@ -164,6 +180,10 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					{
 						$Payload["dark"] = false;
 					}
+					if (($DP_Path == "ha") and (array_key_exists($DP_Path, $Payload) == false))
+					{
+						$Payload["ha"] = false;
+					}
 					// if DP_Path not in Payload stop. 
 					if (array_key_exists($DP_Path, $Payload) == false) {
 						$this->SendDebug("Not in Payload","Topic: ".$DP_Path." is not in Payload.", 0);
@@ -248,6 +268,22 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 						break;
 					}
 
+					switch($DP_Identname)
+					{
+						case "setting_ha":
+							$this->WriteAttributeBoolean('setting_ha',$DP_Value);
+							$this->UpdateFormField("setting_ha", "value", $DP_Value);
+						break;
+						case "setting_reporting":
+							$this->WriteAttributeInteger('setting_reporting',$DP_Value);
+							$this->UpdateFormField("setting_reporting", "value", $DP_Value);
+						break;
+						case "setting_otaauto":
+							$this->WriteAttributeInteger('setting_otaauto',$DP_Value);
+							$this->UpdateFormField("setting_otaauto", "value", $DP_Value);
+						break;
+					}
+
 					// in case the datatype is hidden, dont do anything
 					if (!$DP_Hide)
 					{
@@ -290,6 +326,8 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 		public function RequestAction($Ident, $Value)
 		{
 			$Hostname = $this->ReadPropertyString("Hostname");
+			$StatusEmu = $this->ReadPropertyBoolean("StatusEmu");
+
 			$this->LogMessage("RequestAction : $Ident, $Value",KL_NOTIFY);
 
 			switch ($Ident) {
@@ -297,19 +335,20 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$Topic = 'setting/'.$Hostname;
 					$a = array("dark" => $Value);
 					$this->sendMQTT($Topic, json_encode($a));
-					$this->SetValue('setting_dark', $Value);
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'setting_ha':
 					$Topic = 'setting/'.$Hostname;
 					$a = array("ha" => $Value);
 					$this->sendMQTT($Topic, json_encode($a));
-					$this->SetValue('ha', $Value);
+					//if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'status_power':
 					if ($Value === false){$Status = "off";}
 					if ($Value == true){$Status = "on";}
 					$Topic = 'command/'.$Hostname.'/'.$Status;
 					$this->sendMQTT($Topic, "");
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'status_mode':
 					switch ($Value)
@@ -332,6 +371,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					}
 					$Topic = 'command/'.$Hostname.'/mode';
 					$this->sendMQTT($Topic, json_encode("$Value"));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'status_fan':
 					switch ($Value)
@@ -351,63 +391,89 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 						break;
 					}
 					$Topic = 'command/'.$Hostname.'/fan';
-					$this->sendMQTT($Topic, json_encode("$a"));	
+					$this->sendMQTT($Topic, json_encode("$a"));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'setting_reporting':
+					$Topic = 'setting/'.$Hostname;
+					$a = array("reporting" => $Value);
+					$this->sendMQTT($Topic, json_encode($a));
+					//if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'setting_tmin':
+					$Topic = 'setting/'.$Hostname;
+					$a = array("tmin" => $Value);
+					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'setting_tmax':
+					$Topic = 'setting/'.$Hostname;
+					$a = array("tmax" => $Value);
+					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;				
 				case 'setting_otahost':
+					$Topic = 'setting/'.$Hostname."/otahost";
+					//$a = array("otahost" => $Value);
+					$this->sendMQTT($Topic, json_encode($Value));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;				
 				case 'setting_otaauto':
+					$Topic = 'setting/'.$Hostname;
+					$a = array("otaauto" => $Value);
+					$this->sendMQTT($Topic, json_encode($a));
+					//if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'status_econo':
 					$Topic = 'command/'.$Hostname;
 					$a = array("econo" => $Value);
-					$this->sendMQTT($Topic, json_encode($a));	
+					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'status_swingh':
 					$Topic = 'command/'.$Hostname;
 					$a = array("swingh" => $Value);
 					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'status_swingv':
 					$Topic = 'command/'.$Hostname;
 					$a = array("swingv" => $Value);
 					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;	
 				case 'status_powerful':
 					$Topic = 'command/'.$Hostname;
 					$a = array("powerful" => $Value);
 					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'status_temp':
 					$Topic = 'command/'.$Hostname.'/temp';
-					$this->sendMQTT($Topic, json_encode($Value));	
+					$this->sendMQTT($Topic, json_encode($Value));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}	
 				break;
 				case 'reload_setting':
 					$Topic = 'setting/'.$Hostname;
-					$this->sendMQTT($Topic, "");	
+					$this->sendMQTT($Topic, "");
 				break;	
 				case 'manual_restart':
 					$Topic = 'command/'.$Hostname."/restart";
 					$this->sendMQTT($Topic, "");	
-				break;		
+				break;
+				case 'setManualSettings':
+					$Topic = 'setting/'.$Hostname;
+					$this->sendMQTT($Topic, $Value);
+				break;
 			}
+			
 		}
 
-		public function SetLed($state)
+		public function SetFaikinLed(bool $state)
 		{
 			$this->RequestAction('setting_dark',$state);
 		}
 		
-		public function SetHA($state)
-		{
-			$this->RequestAction('setting_ha',$state);
-		}
-
 		public function RestartDevice()
 		{
 			$this->RequestAction('manual_restart',"");

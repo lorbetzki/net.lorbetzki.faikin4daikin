@@ -63,7 +63,22 @@
             "just aircon settings not WiFI": "nur AC Einstellungen, kein Wifi",
             "all controls": "volle Kontrolle",
             "The hostname corresponds to the topic name": "Der Hostname entspricht dem Topicnamen",
-            "Hostname of the module": "Hostname des Moduls"
+            "Hostname of the module": "Hostname des Moduls",
+            "Advanced settings": "erweiterte Einstellung",
+            "Update time for statereports": "Intervall für Statusreports",
+            "seconds": "sekunden",
+            "URL for OtA Updates": "URL für OTA Updates",
+            "Update time for OTA Updates. 0 means off OTA Updates": "Intervall für OTA Updates. 0 bedeutet keine automatischen Updates",
+            "days": "Tage",
+            "Send Message to HomeAssistant":"Nachrichten an HomeAssistant senden",
+            "Shutdown LED on Faikin for darkmode": "Betriebsled der Faikin ausschalten",
+            "Access control": "Zugangskontrolle",
+            "no access": "kein Zugang übers webinterface",
+            "AC Control only": "nur Kontrolle der Klimaanlage",
+            "Full Access": "volle Kontrolle",
+            "set min. temperature": "Mindesttemperatur",
+            "set max. temperature": "Maximaltemperatur",
+            "Interval in seconds at which the Faikin sends data periodically.": "Intervall in sekunden bei dem das Faikin Daten periodisch sendet"
         }
     }
 }

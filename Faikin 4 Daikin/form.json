@@ -8,8 +8,64 @@
             "type": "ValidationTextBox", 
             "name": "Hostname",
             "caption": "Hostname of the module" 
+        },
+        { 
+            "type": "CheckBox", 
+            "name": "StatusEmu", 
+            "caption": "emulate state" 
         }
     ],
-    "actions": [],
+    "actions": [
+        {
+            "type": "ExpansionPanel",
+            "caption": "Advanced settings",
+            "items": [
+                { 
+                    "type": "NumberSpinner", 
+                    "name": "setting_otaauto",
+                    "caption": "Over the Air update all x days. Zero 0 no auto update.",
+                    "minimum": 0,
+                    "maximum": 30,
+                    "value": 7,
+                    "suffix": "days" 
+                    
+                },
+                { 
+                    "type": "NumberSpinner", 
+                    "name": "setting_reporting",
+                    "caption": "Interval in seconds at which the Faikin sends data periodically.",
+                    "value": 60,
+                    "suffix": "seconds" 
+                },
+                { 
+                    "type": "CheckBox", 
+                    "name": "setting_ha",
+                    "value": true,
+                    "caption": "Send Message to HomeAssistant"
+                },
+                {
+                    "type": "Button", 
+                    "name": "sendSetting", 
+                    "caption": "set settings",
+                    "onClick": [ "$Setting=json_encode(array('otaauto' => $setting_otaauto, 'reporting' => $setting_reporting, 'ha' => $setting_ha));",
+                       "IPS_RequestAction($id, 'setManualSettings', $Setting);",
+                       "echo $Setting;"
+                    ]
+                }
+            ]
+        },
+        { 
+            "type": "Button",
+            "name": "reboot", 
+            "caption": "reboot Faikin",
+            "onClick": "IPS_RequestAction($id, 'manual_restart', '');"
+        },
+        { 
+            "type": "Button",
+            "name": "reload", 
+            "caption": "reload settings",
+            "onClick": "IPS_RequestAction($id, 'reload_setting', '');"
+        }
+    ],
     "status": []
 }
