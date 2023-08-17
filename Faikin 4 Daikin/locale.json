@@ -78,7 +78,12 @@
             "Full Access": "volle Kontrolle",
             "set min. temperature": "Mindesttemperatur",
             "set max. temperature": "Maximaltemperatur",
-            "Interval in seconds at which the Faikin sends data periodically.": "Intervall in sekunden bei dem das Faikin Daten periodisch sendet"
+            "interval for reporting update, 0 deactivate reporting update": "Intervall für Reporting update, 0 schaltet Intervall ab",
+            "emulate state": "Status emulieren",
+            "reload settings": "Einstellungen neu laden",
+            "reboot Faikin": "Faik neustarten",
+            "Over the Air update all x days. 0 deactivate OtA update": "OtA update alle x Tage, 0 deaktiviert Autoupdate.",
+            "set settings": "sende Einstellung"
         }
     }
 }
