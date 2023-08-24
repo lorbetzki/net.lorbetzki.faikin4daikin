@@ -17,6 +17,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			$this->RegisterAttributeInteger('setting_otaauto', '7');
 			$this->RegisterAttributeInteger('setting_reporting', '60');
 			$this->RegisterAttributeBoolean('setting_ha', 'true');
+			$this->RegisterAttributeBoolean('silentModeOnStart', 'false');
 
 			$this->RegisterProfileInteger("FAIKIN_rpm", "", "", " rpm", 0, 0, 0);
 
@@ -45,6 +46,8 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			]);
 
 			$this->RegisterProfileFloat("FAIKIN_Temp", "Temperature", "", " °C", 10, 32, 0.5, 1);
+			$this->RegisterVariableBoolean('silentModeOnStart', $this->Translate('Set fanstate to silent on start'),'~Switch',90);
+			$this->EnableAction('silentModeOnStart', );
 		}
 
 		public function Destroy()
@@ -76,10 +79,9 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 
 			if ($this->Getstatus() == 102 )
 			{
-				$jsonForm["actions"][0]["items"][0]["value"] = $this->ReadAttributeInteger('setting_otaauto');
-				$jsonForm["actions"][0]["items"][1]["value"] = $this->ReadAttributeInteger('setting_reporting');
-				$jsonForm["actions"][0]["items"][2]["value"] = $this->ReadAttributeBoolean('setting_ha');
-
+				$jsonForm["elements"][3]["items"][0]["value"] = $this->ReadAttributeInteger('setting_otaauto');
+				$jsonForm["elements"][3]["items"][1]["value"] = $this->ReadAttributeInteger('setting_reporting');
+				$jsonForm["elements"][3]["items"][2]["value"] = $this->ReadAttributeBoolean('setting_ha');
 			}
 
 			return json_encode($jsonForm);
@@ -300,7 +302,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 								$this->SendDebug("EnableAction:","Create Action for IDENT ".$DP_Identname, 0);
 							}
 						}
-						
+											
 						// now we can set the value.... yeah!
 						$this->SetValue($DP_Identname, $DP_Value);
 					}
@@ -345,7 +347,16 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 				break;
 				case 'status_power':
 					if ($Value === false){$Status = "off";}
-					if ($Value == true){$Status = "on";}
+					if ($Value == true)
+					{	
+						$Status = "on";
+						if ($this->ReadAttributeBoolean('silentModeOnStart'))
+						 {
+							$this->RequestAction('status_fan',-1);
+							$this->SendDebug("ReQuestAction", "silentModeOnStart is active",0);
+						 }
+					}
+
 					$Topic = 'command/'.$Hostname.'/'.$Status;
 					$this->sendMQTT($Topic, "");
 					if ($StatusEmu){$this->SetValue($Ident,$Value);}
@@ -465,6 +476,9 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$Topic = 'setting/'.$Hostname;
 					$this->sendMQTT($Topic, $Value);
 				break;
+				case 'silentModeOnStart':
+					$this->SetSilentModeOnStart($Value);
+				break;
 			}
 			
 		}
@@ -472,6 +486,12 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 		public function SetFaikinLed(bool $state)
 		{
 			$this->RequestAction('setting_dark',$state);
+		}
+
+		public function SetSilentModeOnStart(bool $state)
+		{
+			$this->WriteAttributeBoolean('silentModeOnStart', $state);
+			$this->SetValue('silentModeOnStart', $state);
 		}
 		
 		public function RestartDevice()

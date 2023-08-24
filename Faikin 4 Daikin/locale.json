@@ -3,7 +3,7 @@
         "de": {
             "used protocol": "verwendetes Protokoll",
             "Faikin is Online": "Faikin ist Online",
-            "Temperature at remote / measured": "Temperatur gemessen an der Fernbedienung",
+            "Temperature at remote / measured": "IST-Temperatur",
             "in heating mode": "im Heizmodus",
             "Fanspeed in RPM": "Lüftergeschwindigkeit in rpm",
             "comp": "comp",
@@ -11,7 +11,7 @@
             "Liquid coolant feed temperature": "Vorlauftemperatur des Kühlmittels",
             "AC is powered on": "AC ist eingeschaltet",
             "Mode": "Modus",
-            "Set Roomtemperature": "Setze Raumtemperatur",
+            "Set Roomtemperature": "Setze Solltemperatur",
             "Fan Level": "Lüfterstufe",
             "horizontal louvre swing": "horizontale Lamellenschwenkung",
             "vertical louvre swing": "vertikale Lamellenschwenkung",
@@ -81,9 +81,11 @@
             "interval for reporting update, 0 deactivate reporting update": "Intervall für Reporting update, 0 schaltet Intervall ab",
             "emulate state": "Status emulieren",
             "reload settings": "Einstellungen neu laden",
-            "reboot Faikin": "Faik neustarten",
+            "reboot Faikin": "Faikin neustarten",
             "Over the Air update all x days. 0 deactivate OtA update": "OtA update alle x Tage, 0 deaktiviert Autoupdate.",
-            "set settings": "sende Einstellung"
+            "set settings": "sende Einstellung",
+            "Set fanstate to silent on start": "versetze beim Start die Lüfterstufe auf Geräuscharm",
+            "silent": "Geräuscharm"
         }
     }
 }

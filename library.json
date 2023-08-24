@@ -4,9 +4,9 @@
     "author": "Kristian Lorbetzki",
     "url": "https://github.com/lorbetzki/net.lorbetzki.faikin4daikin.git",
     "compatibility": {
-        "version": "7.0"
+        "version": "6.0"
     },
-    "version": "0.1",
-    "build": 20230812,
+    "version": "1.02",
+    "build": 20230824,
     "date": 0
 }

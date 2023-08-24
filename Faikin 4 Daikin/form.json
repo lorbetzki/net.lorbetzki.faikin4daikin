@@ -13,9 +13,7 @@
             "type": "CheckBox", 
             "name": "StatusEmu", 
             "caption": "emulate state" 
-        }
-    ],
-    "actions": [
+        },
         {
             "type": "ExpansionPanel",
             "caption": "Advanced settings",
@@ -52,7 +50,10 @@
                     ]
                 }
             ]
-        },
+        }
+    ],
+    "actions": [
+        
         { 
             "type": "Button",
             "name": "reboot", 
