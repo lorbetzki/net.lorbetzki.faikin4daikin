@@ -479,6 +479,30 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 				case 'silentModeOnStart':
 					$this->SetSilentModeOnStart($Value);
 				break;
+				case 'status_comfort':
+					$Topic = 'command/'.$Hostname;
+					$a = array("comfort" => $Value);
+					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
+				break;
+				case 'status_quiet':
+					$Topic = 'command/'.$Hostname;
+					$a = array("quiet" => $Value);
+					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
+				break;	
+				case 'status_sensor':
+					$Topic = 'command/'.$Hostname;
+					$a = array("sensor" => $Value);
+					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
+				break;
+				case 'status_streamer':
+					$Topic = 'command/'.$Hostname;
+					$a = array("streamer" => $Value);
+					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
+				break;			
 			}
 			
 		}

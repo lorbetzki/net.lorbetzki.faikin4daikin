@@ -11,7 +11,7 @@ $DPStatus = [
     ['comp',             $this->Translate('comp'),                                                                                                                                'INT', '', false, true],
     ['outside',          $this->Translate('Outside temperature'),                                                                                                                 'FLOAT', '~Temperature', false, false],
     ['liquid',           $this->Translate('Liquid coolant feed temperature'),                                                                                                     'FLOAT', '~Temperature', false, false],
-    ['power',            $this->Translate('AC is powered on'),                                                                                                                'BOOL', '~Switch', true, false],
+    ['power',            $this->Translate('AC is powered on'),                                                                                                                    'BOOL', '~Switch', true, false],
     ['mode',             $this->Translate('Mode'),                                                                                                                                'INT', 'FAIKIN_Mode', true, false],
     ['temp',             $this->Translate('Set Roomtemperature'),                                                                                                                 'FLOAT', 'FAIKIN_Temp', true, false],
     ['fan',              $this->Translate('Fan Level'),                                                                                                                           'INT', 'FAIKIN_Fanlevel', true, false],
@@ -24,6 +24,13 @@ $DPStatus = [
     ['auto0',            $this->Translate('Time to turn off HH:MM, 00:00 is dont turn off. This sets the auto0 setting'),                                                         'STRING', '', false, true],
     ['auto1',            $this->Translate('Time to turn off HH:MM, 00:00 is dont turn off. This sets the auto1 setting'),                                                         'STRING', '', false, true],
     ['autop',            $this->Translate('if we automatically turn on/off power based on temperature'),                                                                          'BOOL', '', false, true],
+    ['comfort',           $this->Translate('comfort airflow mode'),                                                                                                            'BOOL', '~Switch', true, false],
+    ['quiet',           $this->Translate('quiet outdoor unit'),                                                                                                              'BOOL', '~Switch', true, false],
+    ['sensor',           $this->Translate('intelligent eye sensor'),                                                                                                             'BOOL', '~Switch', true, false],
+    ['streamer',           $this->Translate('streamer'),                                                                                                           'BOOL', '~Switch', true, false],
+    ['ts',              $this->Translate('Timestamp'),                                                                                                                            'INT', '', false, true],
+
+    
 ];
 
 //state/hostname

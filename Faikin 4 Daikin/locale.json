@@ -85,7 +85,11 @@
             "Over the Air update all x days. 0 deactivate OtA update": "OtA update alle x Tage, 0 deaktiviert Autoupdate.",
             "set settings": "sende Einstellung",
             "Set fanstate to silent on start": "versetze beim Start die Lüfterstufe auf Geräuscharm",
-            "silent": "Geräuscharm"
+            "silent": "Geräuscharm",
+            "comfort airflow mode":"Komfort modus",
+            "intelligent eye sensor":"Intelligent Eye sensor",
+            "quiet outdoor unit":"Außengerät im Flüstermodus",
+            "streamer":"Streamer"
         }
     }
 }
