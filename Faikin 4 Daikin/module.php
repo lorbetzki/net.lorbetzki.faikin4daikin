@@ -362,6 +362,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'status_mode':
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 					switch ($Value)
 					{
 						case 1:
@@ -382,7 +383,6 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					}
 					$Topic = 'command/'.$Hostname.'/mode';
 					$this->sendMQTT($Topic, json_encode("$Value"));
-					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'status_fan':
 					switch ($Value)
