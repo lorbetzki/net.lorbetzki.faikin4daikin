@@ -46,6 +46,8 @@ Intervall für Reporting update, 0 schaltet Intervall ab | Standard 60 sek. dabe
 Nachrichten an HomeAssitant senden | Stanard eingeschaltet. Das Hardwaremodul sendet spezielle MQTT Topic damit HomeAssistant direkt verwendet werden kann. Das abschalten verhindert, das zuviele MQTT Daten gesendet werden.
 Sende Einstellung | sendet die Einstellung direkt an das Hardwaremodul
 
+__Empfehlung__:
+Es empfiehlt sich das Reporting auf 0 und Homeassistentmeldungen, sofern man die nicht benötigt, auszuschalten. Die Werte des Reporting werden nicht ausgewertet und man spart sich somit unnötigen Datenverkehr. Das selbe gilt für Homeassitentmeldungen. 
 
 ### 5. Statusvariablen und Profile
 
@@ -73,6 +75,9 @@ IP Adresse | string | zeigt die IP Adresse des Hardwaremoduls an
 Schalte Betriebsled am Faikin aus | boolean | schaltet die LED am Hardwaremodul an/aus, die ist verdammt hell
 Fehler Beschreibung | string | Fehlerbeschreibung, leider wird diese nur auf Englisch dargestellt
 versetze beim Start die Lüfterstufe auf Geräuscharm | boolean | Das Hardwaremodul merkt sich den zuletzt eingestellten Modus, leider gilt das nicht für den Geräuscharmen Modus, da es seitens der Klimaanlage keine Rückmeldung gibt. Wenn diese Variable auf WAHR gesetzt wird, wird immer beim aktivieren der Klimaanlage in den Geräuscharmen Modus geschaltet. 
+Intelligent Eye Sensor | boolean | schaltet die 3D Sensor funktion ein oder aus.
+Komfort Modus | booelan | schaltet den Komfortmodus ein oder aus.
+Außengerät im Flüstermodus | boolean | schaltet das Außengerät in den Flüstermodus ein oder aus
 
 #### Profile
 

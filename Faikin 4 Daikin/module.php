@@ -131,9 +131,13 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$this->SendDebug("known topic",$TopicReceived." with data ".$encodePayload,0);
 					$DP_SORT = 20;
 				break;
-			
-				case "$TopicStatus":
+				
+				// ignore reporting, because it make not sense to use this but it causes error...
 				case "$TopicReporting":
+					$WorkTopic = false;
+				break;
+				
+				case "$TopicStatus":
 					$WorkTopic = $TopicStatus;
 					$WorkDB = $DPStatus;
 					$IdentPrefix = "status_";
@@ -194,15 +198,18 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 
 					$DP_Value = $Payload[''.$DP_Path.''];
 
+
+					// ### remove this in the feature, we dont need to know this...
 					// if the value is an array, (in some case used by home, temp or liquid) use the first one
-					
+					/*
 					if(is_array($DP_Value))
 					{
 						$this->SendDebug("Value is an array:","Topic: ".$DP_Path." has more the one value, use the first one: ".$DP_Value[0], 0);
 						$DP_Value = $DP_Value[0];
 					}
-
-					// make symcon happy to create idents
+					*/
+					
+					// make symcon happy to create idents without special characters
 					$DP_Identname = str_replace("-","_",$IdentPrefix.$DP_Path);
 
 					if (!$DP_Hide)
