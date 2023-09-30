@@ -46,9 +46,6 @@ Intervall für Reporting update, 0 schaltet Intervall ab | Standard 60 sek. dabe
 Nachrichten an HomeAssitant senden | Stanard eingeschaltet. Das Hardwaremodul sendet spezielle MQTT Topic damit HomeAssistant direkt verwendet werden kann. Das abschalten verhindert, das zuviele MQTT Daten gesendet werden.
 Sende Einstellung | sendet die Einstellung direkt an das Hardwaremodul
 
-__Empfehlung__:
-Es empfiehlt sich das Reporting auf 0 und Homeassistentmeldungen, sofern man die nicht benötigt, auszuschalten. Die Werte des Reporting werden nicht ausgewertet und man spart sich somit unnötigen Datenverkehr. Das selbe gilt für Homeassitentmeldungen. 
-
 ### 5. Statusvariablen und Profile
 
 Die Statusvariablen/Kategorien werden automatisch angelegt. Das Löschen einzelner kann zu Fehlfunktionen führen.
