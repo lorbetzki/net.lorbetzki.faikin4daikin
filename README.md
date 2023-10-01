@@ -42,8 +42,8 @@ Erweiterte Einstellung
 Name     | Beschreibung
 -------- | ------------------
 OtA update alle x Tage, 0 deaktiviert Autoupdate | Standard 7 Tage, dort wird in der Nacht auf updates geprüft und installiert.
-Intervall für Reporting update, 0 schaltet Intervall ab | Standard 60 sek. dabei wird periodisch die werte aktualisiert.
-Nachrichten an HomeAssitant senden | Stanard eingeschaltet. Das Hardwaremodul sendet spezielle MQTT Topic damit HomeAssistant direkt verwendet werden kann. Das abschalten verhindert, das zuviele MQTT Daten gesendet werden.
+Intervall für Reporting update, 0 schaltet Intervall ab | Standard 60 sek. Wird nicht ausgewertet und kann auf 0 gestellt werden.
+Nachrichten an HomeAssitant senden | Standard eingeschaltet. Das Hardwaremodul sendet spezielle MQTT Topic damit HomeAssistant direkt verwendet werden kann. Das abschalten wird nicht empfohlen, da auch dieses Modul Statusmeldungen wie Außen- und Innentemperatur, Drehzahl usw. aus den Meldungen auswertet. Ein Abschalten bewirkt, das nur aktive Änderungen übertragen werden.
 Sende Einstellung | sendet die Einstellung direkt an das Hardwaremodul
 
 ### 5. Statusvariablen und Profile
