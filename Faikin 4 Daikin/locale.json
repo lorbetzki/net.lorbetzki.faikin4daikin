@@ -23,7 +23,7 @@
             "Time to turn off HH:MM, 00:00 is dont turn off. This sets the auto1 setting": "Zeit zum Ausschalten HH:MM, 00:00 ist nicht ausschalten. Damit wird die Einstellung auto1 festgelegt",
             "if we automatically turn on/off power based on temperature": "wenn wir den Strom je nach Temperatur automatisch ein- und ausschalten",
             "Timestamp": "Zeitstempel",
-            "ID": "ID",
+            "UniqueID": "Eindeutige ID",
             "uptime": "uptime",
             "App": "App",
             "Version": "Version",

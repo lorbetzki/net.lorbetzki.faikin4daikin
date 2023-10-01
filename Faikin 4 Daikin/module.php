@@ -18,6 +18,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			$this->RegisterAttributeInteger('setting_reporting', '60');
 			$this->RegisterAttributeBoolean('setting_ha', 'true');
 			$this->RegisterAttributeBoolean('silentModeOnStart', 'false');
+			$this->RegisterAttributeString('state_id', '');
 
 			$this->RegisterProfileInteger("FAIKIN_rpm", "", "", " rpm", 0, 0, 0);
 
@@ -63,8 +64,9 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			//$this->SetReceiveDataFilter('.*' . $MQTTTopic . '.*');
 			
 			$Hostname = $this->ReadPropertyString("Hostname");
-			
-			$this->SetReceiveDataFilter('.*' . $Hostname . '.*');
+			$UID = $this->ReadAttributeString('state_id');
+
+			$this->SetReceiveDataFilter('.*(' .$Hostname.'|'.$UID.').*');
 
 			if (($Hostname) AND $this->Getstatus() == 102)
 			{
@@ -113,6 +115,14 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			$TopicError 		= "error/".$Hostname;
 			$TopicSetting 		= "setting/".$Hostname;
 
+			if ($this->ReadAttributeString('state_id'))
+			{
+				$TopicUID			= $this->ReadAttributeString('state_id');
+			}
+			else
+			{
+				$TopicUID			= "";
+			}
 
 			switch($TopicReceived)
 			{
@@ -131,9 +141,12 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$this->SendDebug("known topic",$TopicReceived." with data ".$encodePayload,0);
 					$DP_SORT = 20;
 				break;
-				
-				case "$TopicStatus":
+
 				case "$TopicReporting":
+					$WorkTopic = false;
+				break;
+
+				case "$TopicStatus":
 					$WorkTopic = $TopicStatus;
 					$WorkDB = $DPStatus;
 					$IdentPrefix = "status_";
@@ -155,6 +168,14 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$IdentPrefix = "setting_";
 					$this->SendDebug("known topic",$TopicSetting." with data ".$encodePayload,0);
 					$DP_SORT = 50;
+				break;
+
+				case "$TopicUID":
+					$WorkTopic = $TopicUID;
+					$WorkDB = $DPUID;
+					$IdentPrefix = "status_";
+					$this->SendDebug("known topic",$TopicUID." with data ".$encodePayload,0);
+					$DP_SORT = 10;
 				break;
 
 				default:
@@ -194,6 +215,15 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 
 					$DP_Value = $Payload[''.$DP_Path.''];
 
+					// when we receive the UID from the state/$hostname topic, write it to the attribute
+					if (($DP_Path == "id") and ($WorkTopic == $TopicState))
+					{
+						if (!$this->ReadAttributeString('state_id'))
+						 {
+							$this->SendDebug("Missing UID found","Topic: ".$DP_Path." set id ".$DP_Value." as attribute.", 0);
+							$this->WriteAttributeString('state_id',"$DP_Value");
+						 }
+					}
 
 					// if the value is an array, (in some case used by home, temp or liquid) use the first one
 					
@@ -202,8 +232,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 						$this->SendDebug("Value is an array:","Topic: ".$DP_Path." has more the one value, use the first one: ".$DP_Value[0], 0);
 						$DP_Value = $DP_Value[0];
 					}
-					
-					
+
 					// make symcon happy to create idents without special characters
 					$DP_Identname = str_replace("-","_",$IdentPrefix.$DP_Path);
 
@@ -306,9 +335,34 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 						}
 											
 						// now we can set the value.... yeah!
+						$this->SendDebug("Set Value:","Update ".$DP_Identname." to ".$DP_Value, 0);
 						$this->SetValue($DP_Identname, $DP_Value);
 					}
 
+					// if an update from the Topic UID will be receive make some updates
+					if($TopicUID)
+					{
+						switch($DP_Identname)
+						{
+							// see https://github.com/revk/ESP32-Faikin/discussions/121 the terminology is different.. status_temp is the room temperature
+							case "status_temp":
+								$this->SendDebug("Set Value from UID Topic:","Update status_home to ".$DP_Value, 0);
+								$this->SetValue('status_home', $DP_Value);
+							break;
+							
+							// this one is ok...
+							case "status_outside":
+							case "status_liquid":
+							case "status_fanrpm":
+								$this->SendDebug("Set Value from UID Topic:","Update ".$DP_Identname." to ".$DP_Value, 0);
+								$this->SetValue($DP_Identname, $DP_Value);
+							break;
+							default:
+								$this->SendDebug("ignore Value:","Update ".$DP_Identname." to ".$DP_Value, 0);
+						//		return;
+							break;
+						}						
+					} 
 				}
 			}
 

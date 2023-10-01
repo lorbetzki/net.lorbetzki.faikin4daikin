@@ -28,15 +28,13 @@ $DPStatus = [
     ['quiet',           $this->Translate('quiet outdoor unit'),                                                                                                              'BOOL', '~Switch', true, false],
     ['sensor',           $this->Translate('intelligent eye sensor'),                                                                                                             'BOOL', '~Switch', true, false],
     ['streamer',           $this->Translate('streamer'),                                                                                                           'BOOL', '~Switch', true, false],
-    ['ts',              $this->Translate('Timestamp'),                                                                                                                            'INT', '', false, true],
-
-    
+    ['ts',              $this->Translate('Timestamp'),                                                                                                                            'INT', '', false, true],    
 ];
 
 //state/hostname
 $DPState = [
     ['ts',              $this->Translate('Timestamp'),                                                                                                                            'INT', '', false, true],
-    ['id',              $this->Translate('ID'),                                                                                                                                   'STRING', '', false, true],
+    ['id',              $this->Translate('UniqueID'),                                                                                                                             'STRING', '', false, true],
     ['up',              $this->Translate('uptime'),                                                                                                                               'INT', '~UnixTimestampTime', false, true],
     ['app',             $this->Translate('App'),                                                                                                                                  'STRING', '', false, true],
     ['version',         $this->Translate('Version'),                                                                                                                              'STRING', '', false, true],
@@ -81,4 +79,16 @@ $DPError = [
     ['description',              $this->Translate('Error Description'),                                                                                                                    'STRING', '',  false, false],
     ['failed-set',              $this->Translate('Error by change setting'),                                                                                                                    'STRING', '',  false, false],
 
+];
+
+$DPUID = [
+    ['online',           $this->Translate('Faikin is Online'),                                                                                                                    'BOOL', '~Switch', false, true],
+    ['target',           $this->Translate('target temperature'),                                                                                                                 'FLOAT', 'FAIKIN_Temp', false, true],
+    ['temp',             $this->Translate('Set Roomtemperature'),                                                                                                                 'FLOAT', 'FAIKIN_Temp', false, true],
+    ['outside',          $this->Translate('Outside temperature'),                                                                                                                 'FLOAT', '~Temperature', false, true],
+    ['liquid',           $this->Translate('Liquid coolant feed temperature'),                                                                                                     'FLOAT', '~Temperature', false, true],
+    ['fanrpm',           $this->Translate('Fanspeed in RPM'),                                                                                                                     'INT', 'FAIKIN_rpm', false, true],
+    ['mode',             $this->Translate('Mode'),                                                                                                                                'INT', 'FAIKIN_Mode', false, true],
+    ['fan',              $this->Translate('Fan Level'),                                                                                                                           'INT', 'FAIKIN_Fanlevel', false, true],    
+    ['swing',            $this->Translate('louvre swing'),                                                                                                                           'INT', '', false, true],    
 ];
