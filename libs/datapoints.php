@@ -91,4 +91,5 @@ $DPUID = [
     ['mode',             $this->Translate('Mode'),                                                                                                                                'INT', 'FAIKIN_Mode', false, true],
     ['fan',              $this->Translate('Fan Level'),                                                                                                                           'INT', 'FAIKIN_Fanlevel', false, true],    
     ['swing',            $this->Translate('louvre swing'),                                                                                                                           'INT', '', false, true],    
+    ['comp',            $this->Translate('compressor utilization'),                                                                                                                           'INT', '~Intensity.100', false, true],    
 ];
