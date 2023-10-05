@@ -354,6 +354,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 							case "outside":
 							case "liquid":
 							case "fanrpm":
+							case "comp":
 								$this->SendDebug("Set Value from UID Topic:","Update status_".$DP_Identname." to ".$DP_Value, 0);
 								$this->SetValue('status_'.$DP_Identname, $DP_Value);
 							break;
