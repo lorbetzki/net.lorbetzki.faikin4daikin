@@ -6,7 +6,7 @@
             "Temperature at remote / measured": "IST-Temperatur",
             "in heating mode": "im Heizmodus",
             "Fanspeed in RPM": "Lüftergeschwindigkeit in rpm",
-            "comp": "comp",
+            "compressor utilization": "Kompressor Auslastung",
             "Outside temperature": "Außentemperatur",
             "Liquid coolant feed temperature": "Vorlauftemperatur des Kühlmittels",
             "AC is powered on": "AC ist eingeschaltet",

@@ -8,7 +8,7 @@ $DPStatus = [
     ['home',             $this->Translate('Temperature at remote / measured'),                                                                                                    'FLOAT', '~Temperature', false, false],
     ['heat',             $this->Translate('in heating mode'),                                                                                                                     'BOOL', 'Switch', false, false],
     ['fanrpm',           $this->Translate('Fanspeed in RPM'),                                                                                                                     'INT', 'FAIKIN_rpm', false, false],
-    ['comp',             $this->Translate('comp'),                                                                                                                                'INT', '', false, true],
+    ['comp',             $this->Translate('compressor utilization'),                                                                                                              'INT', '~Intensity.100', false, false],
     ['outside',          $this->Translate('Outside temperature'),                                                                                                                 'FLOAT', '~Temperature', false, false],
     ['liquid',           $this->Translate('Liquid coolant feed temperature'),                                                                                                     'FLOAT', '~Temperature', false, false],
     ['power',            $this->Translate('AC is powered on'),                                                                                                                    'BOOL', '~Switch', true, false],

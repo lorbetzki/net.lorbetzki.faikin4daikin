@@ -173,7 +173,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 				case "$TopicUID":
 					$WorkTopic = $TopicUID;
 					$WorkDB = $DPUID;
-					$IdentPrefix = "status_";
+					$IdentPrefix = "";
 					$this->SendDebug("known topic",$TopicUID." with data ".$encodePayload,0);
 					$DP_SORT = 10;
 				break;
@@ -345,20 +345,20 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 						switch($DP_Identname)
 						{
 							// see https://github.com/revk/ESP32-Faikin/discussions/121 the terminology is different.. status_temp is the room temperature
-							case "status_temp":
+							case "temp":
 								$this->SendDebug("Set Value from UID Topic:","Update status_home to ".$DP_Value, 0);
 								$this->SetValue('status_home', $DP_Value);
 							break;
 							
-							// this one is ok...
-							case "status_outside":
-							case "status_liquid":
-							case "status_fanrpm":
-								$this->SendDebug("Set Value from UID Topic:","Update ".$DP_Identname." to ".$DP_Value, 0);
-								$this->SetValue($DP_Identname, $DP_Value);
+							// this values are ok...
+							case "outside":
+							case "liquid":
+							case "fanrpm":
+								$this->SendDebug("Set Value from UID Topic:","Update status_".$DP_Identname." to ".$DP_Value, 0);
+								$this->SetValue('status_'.$DP_Identname, $DP_Value);
 							break;
 							default:
-								$this->SendDebug("ignore Value:","Update ".$DP_Identname." to ".$DP_Value, 0);
+								$this->SendDebug("ignore Value:","Update status_".$DP_Identname." to ".$DP_Value, 0);
 						//		return;
 							break;
 						}						
