@@ -342,7 +342,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					// if an update from the Topic UID will be receive make some updates
 					if($TopicUID)
 					{
-						if (@$this->GetIDForIdent(''.$DP_Identname.''))
+						if (@$this->GetIDForIdent('status_'.$DP_Identname.''))
 						{
 							switch($DP_Identname)
 							{
