@@ -342,27 +342,30 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					// if an update from the Topic UID will be receive make some updates
 					if($TopicUID)
 					{
-						switch($DP_Identname)
+						if (@$this->GetIDForIdent(''.$DP_Identname.''))
 						{
-							// see https://github.com/revk/ESP32-Faikin/discussions/121 the terminology is different.. status_temp is the room temperature
-							case "temp":
-								$this->SendDebug("Set Value from UID Topic:","Update status_home to ".$DP_Value, 0);
-								$this->SetValue('status_home', $DP_Value);
-							break;
-							
-							// this values are ok...
-							case "outside":
-							case "liquid":
-							case "fanrpm":
-							case "comp":
-								$this->SendDebug("Set Value from UID Topic:","Update status_".$DP_Identname." to ".$DP_Value, 0);
-								$this->SetValue('status_'.$DP_Identname, $DP_Value);
-							break;
-							default:
-								$this->SendDebug("ignore Value:","Update status_".$DP_Identname." to ".$DP_Value, 0);
-						//		return;
-							break;
-						}						
+							switch($DP_Identname)
+							{
+								// see https://github.com/revk/ESP32-Faikin/discussions/121 the terminology is different.. status_temp is the room temperature
+								case "temp":
+									$this->SendDebug("Set Value from UID Topic:","Update status_home to ".$DP_Value, 0);
+									$this->SetValue('status_home', $DP_Value);
+								break;
+								
+								// this values are ok...
+								case "outside":
+								case "liquid":
+								case "fanrpm":
+								case "comp":
+									$this->SendDebug("Set Value from UID Topic:","Update status_".$DP_Identname." to ".$DP_Value, 0);
+									$this->SetValue('status_'.$DP_Identname, $DP_Value);
+								break;
+								default:
+									$this->SendDebug("ignore Value:","Update status_".$DP_Identname." to ".$DP_Value, 0);
+							//		return;
+								break;
+							}						
+						}
 					} 
 				}
 			}
