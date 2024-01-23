@@ -89,7 +89,9 @@
             "comfort airflow mode":"Komfort modus",
             "intelligent eye sensor":"Intelligent Eye sensor",
             "quiet outdoor unit":"Außengerät im Flüstermodus",
-            "streamer":"Streamer"
+            "streamer":"Streamer",
+            "activate Live status messages for all variable": "aktivere Live Statusmeldungen für alle Variablen",
+            "Live Status": "Live Status"
         }
     }
 }

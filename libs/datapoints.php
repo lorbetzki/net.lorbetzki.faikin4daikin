@@ -69,6 +69,7 @@ $DPSetting = [
     ['ha',              $this->Translate('send Home-Assistant message via MQTT'),                                                                                                 'BOOL', '~Switch', true, true],
     ['reporting',       $this->Translate('reporting state in seconds'),                                                                                                           'INT', '',  true, true],
     ['dark',            $this->Translate('Shutdown LED'),                                                                                                                         'BOOL', '~Switch', true, false],
+    ['livestatus',      $this->Translate('Live Status'),                                                                                                                         'BOOL', '~Switch', true, true],
     ['tmin',            $this->Translate('Min temperature'),                                                                                                                      'FLOAT', '~Temperature', true, true],
     ['tmax',            $this->Translate('Max temperature'),                                                                                                                      'FLOAT', '~Temperature', true, true],
     ['otahost',         $this->Translate('OTA URL'),                                                                                                                         'STRING', '', true, true],

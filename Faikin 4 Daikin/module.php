@@ -19,6 +19,8 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			$this->RegisterAttributeBoolean('setting_ha', 'true');
 			$this->RegisterAttributeBoolean('silentModeOnStart', 'false');
 			$this->RegisterAttributeString('state_id', '');
+			
+			$this->RegisterAttributeBoolean('setting_livestatus', 'false');
 
 			$this->RegisterProfileInteger("FAIKIN_rpm", "", "", " rpm", 0, 0, 0);
 
@@ -84,6 +86,8 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 				$jsonForm["elements"][3]["items"][0]["value"] = $this->ReadAttributeInteger('setting_otaauto');
 				$jsonForm["elements"][3]["items"][1]["value"] = $this->ReadAttributeInteger('setting_reporting');
 				$jsonForm["elements"][3]["items"][2]["value"] = $this->ReadAttributeBoolean('setting_ha');
+				$jsonForm["elements"][3]["items"][3]["value"] = $this->ReadAttributeBoolean('setting_livestatus');
+
 			}
 
 			return json_encode($jsonForm);
@@ -123,6 +127,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			{
 				$TopicUID			= "";
 			}
+			$TopicSettingUID 		= "setting/".$TopicUID;
 
 			switch($TopicReceived)
 			{
@@ -163,6 +168,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 				break;
 
 				case "$TopicSetting":
+				case "$TopicSettingUID":
 					$WorkTopic = $TopicSetting;
 					$WorkDB = $DPSetting;
 					$IdentPrefix = "setting_";
@@ -315,6 +321,10 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 							$this->WriteAttributeInteger('setting_otaauto',$DP_Value);
 							$this->UpdateFormField("setting_otaauto", "value", $DP_Value);
 						break;
+						case "setting_livestatus":
+							$this->WriteAttributeBoolean('setting_livestatus',$DP_Value);
+							$this->UpdateFormField("setting_livestatus", "value", $DP_Value);
+						break;
 					}
 
 					// in case the datatype is hidden, dont do anything
@@ -405,6 +415,12 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$this->sendMQTT($Topic, json_encode($a));
 					//if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
+				case 'setting_livestatus':
+					$Topic = 'setting/'.$Hostname;
+					$a = array("livestatus" => $Value);
+					$this->sendMQTT($Topic, json_encode($a));
+					//if ($StatusEmu){$this->SetValue($Ident,$Value);}
+				break;				
 				case 'status_power':
 					if ($Value === false){$Status = "off";}
 					if ($Value == true)

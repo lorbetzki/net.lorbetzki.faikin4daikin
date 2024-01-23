@@ -41,11 +41,17 @@
                     "value": true,
                     "caption": "Send Message to HomeAssistant"
                 },
+                { 
+                    "type": "CheckBox", 
+                    "name": "setting_livestatus",
+                    "value": true,
+                    "caption": "receive Live status messages from all variable"
+                },
                 {
                     "type": "Button", 
                     "name": "sendSetting", 
                     "caption": "set settings",
-                    "onClick": [ "$Setting=json_encode(array('otaauto' => $setting_otaauto, 'reporting' => $setting_reporting, 'ha' => $setting_ha));",
+                    "onClick": [ "$Setting=json_encode(array('otaauto' => $setting_otaauto, 'reporting' => $setting_reporting, 'ha' => $setting_ha, 'livestatus' => $setting_livestatus));",
                        "IPS_RequestAction($id, 'setManualSettings', $Setting);"
                     ]
                 }
