@@ -11,6 +11,7 @@ $DPStatus = [
     ['comp',             $this->Translate('compressor utilization'),                                                                                                              'INT', '~Intensity.100', false, false],
     ['outside',          $this->Translate('Outside temperature'),                                                                                                                 'FLOAT', '~Temperature', false, false],
     ['liquid',           $this->Translate('Liquid coolant feed temperature'),                                                                                                     'FLOAT', '~Temperature', false, false],
+    ['Wh',              $this->Translate('total consumption'),                                                                                                                    'FLOAT', 'FAIKIN_kwh', false, false],
     ['power',            $this->Translate('AC is powered on'),                                                                                                                    'BOOL', '~Switch', true, false],
     ['mode',             $this->Translate('Mode'),                                                                                                                                'INT', 'FAIKIN_Mode', true, false],
     ['temp',             $this->Translate('Set Roomtemperature'),                                                                                                                 'FLOAT', 'FAIKIN_Temp', true, false],
@@ -24,10 +25,10 @@ $DPStatus = [
     ['auto0',            $this->Translate('Time to turn off HH:MM, 00:00 is dont turn off. This sets the auto0 setting'),                                                         'STRING', '', false, true],
     ['auto1',            $this->Translate('Time to turn off HH:MM, 00:00 is dont turn off. This sets the auto1 setting'),                                                         'STRING', '', false, true],
     ['autop',            $this->Translate('if we automatically turn on/off power based on temperature'),                                                                          'BOOL', '', false, true],
-    ['comfort',           $this->Translate('comfort airflow mode'),                                                                                                            'BOOL', '~Switch', true, false],
-    ['quiet',           $this->Translate('quiet outdoor unit'),                                                                                                              'BOOL', '~Switch', true, false],
-    ['sensor',           $this->Translate('intelligent eye sensor'),                                                                                                             'BOOL', '~Switch', true, false],
-    ['streamer',           $this->Translate('streamer'),                                                                                                           'BOOL', '~Switch', true, false],
+    ['comfort',           $this->Translate('comfort airflow mode'),                                                                                                               'BOOL', '~Switch', true, false],
+    ['quiet',           $this->Translate('quiet outdoor unit'),                                                                                                                   'BOOL', '~Switch', true, false],
+    ['sensor',           $this->Translate('intelligent eye sensor'),                                                                                                              'BOOL', '~Switch', true, false],
+    ['streamer',           $this->Translate('streamer'),                                                                                                                          'BOOL', '~Switch', true, false],
     ['ts',              $this->Translate('Timestamp'),                                                                                                                            'INT', '', false, true],    
 ];
 
@@ -38,7 +39,7 @@ $DPState = [
     ['up',              $this->Translate('uptime'),                                                                                                                               'INT', '~UnixTimestampTime', false, true],
     ['app',             $this->Translate('App'),                                                                                                                                  'STRING', '', false, true],
     ['version',         $this->Translate('Version'),                                                                                                                              'STRING', '', false, true],
-    ['build-suffix',    $this->Translate('Firmwarebuild Suffix'),                                                                                                                  'STRING', '', false, true],
+    ['build-suffix',    $this->Translate('Firmwarebuild Suffix'),                                                                                                                 'STRING', '', false, true],
     ['build',           $this->Translate('Firmwarebuild'),                                                                                                                        'STRING', '', false, true],
     ['flash',           $this->Translate('flash used'),                                                                                                                           'INT', '', false, true],
     ['rst',             $this->Translate('rst'),                                                                                                                                  'INT', '', false, true],
@@ -72,7 +73,7 @@ $DPSetting = [
     ['livestatus',      $this->Translate('Live Status'),                                                                                                                         'BOOL', '~Switch', true, true],
     ['tmin',            $this->Translate('Min temperature'),                                                                                                                      'FLOAT', '~Temperature', true, true],
     ['tmax',            $this->Translate('Max temperature'),                                                                                                                      'FLOAT', '~Temperature', true, true],
-    ['otahost',         $this->Translate('OTA URL'),                                                                                                                         'STRING', '', true, true],
+    ['otahost',         $this->Translate('OTA URL'),                                                                                                                                'STRING', '', true, true],
     ['otaauto',     	$this->Translate('OTA Autoupdate'),                                                                                                                      'INT', '', true, true],
 ];
 
@@ -92,5 +93,8 @@ $DPUID = [
     ['mode',             $this->Translate('Mode'),                                                                                                                                'INT', 'FAIKIN_Mode', false, true],
     ['fan',              $this->Translate('Fan Level'),                                                                                                                           'INT', 'FAIKIN_Fanlevel', false, true],    
     ['swing',            $this->Translate('louvre swing'),                                                                                                                           'INT', '', false, true],    
-    ['comp',            $this->Translate('compressor utilization'),                                                                                                                           'INT', '~Intensity.100', false, true],    
+    ['comp',            $this->Translate('compressor utilization'),                                                                                                                           'INT', '~Intensity.100', false, true],
+    ['Wh',              $this->Translate('total consumption'),                                                                                                                     'FLOAT', 'FAIKIN_kwh', false, true],    
+    ['fan',              $this->Translate('Fan Level'),                                                                                                                           'INT', 'FAIKIN_Fanlevel', true, true],
+
 ];

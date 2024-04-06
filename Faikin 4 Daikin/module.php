@@ -24,6 +24,8 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 
 			$this->RegisterProfileInteger("FAIKIN_rpm", "", "", " rpm", 0, 0, 0);
 
+			$this->RegisterProfileFloat("FAIKIN_kwh", "", "", " kWh", 0, 0, 0, 1);
+
 			$this->RegisterProfileIntegerEx("FAIKIN_Mode", "", "", "", [
 				['1', $this->Translate('heat'),  '', 0xFFFF00],
 				['2', $this->Translate('cool'),  '', 0x00FF00],
@@ -265,7 +267,6 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					// for some values we need to change the type
 					switch($DP_Path)
 					{
-
 						case "fan":
 							switch($DP_Value)
 							{
@@ -304,6 +305,9 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 									$DP_Value = 1;
 								break;
 							}
+						break;
+						case "Wh":
+							$DP_Value = $DP_Value / 1000;
 						break;
 					}
 
@@ -361,7 +365,10 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 									$this->SendDebug("Set Value from UID Topic:","Update status_home to ".$DP_Value, 0);
 									$this->SetValue('status_home', $DP_Value);
 								break;
-								
+								case "Wh":
+									$this->SendDebug("Set Value from UID Topic:","Update status_".$DP_Identname." to ".$DP_Value / 1000, 0);
+									$this->SetValue('status_'.$DP_Identname, $DP_Value / 1000);
+								break;
 								// this values are ok...
 								case "outside":
 								case "liquid":
