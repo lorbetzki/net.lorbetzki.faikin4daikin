@@ -24,7 +24,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 
 			$this->RegisterProfileInteger("FAIKIN_rpm", "", "", " rpm", 0, 0, 0);
 
-			$this->RegisterProfileFloat("FAIKIN_kwh", "", "", " kWh", 0, 0, 0, 1);
+			$this->RegisterProfileFloat("FAIKIN_kwh", "", "", " kWh", 0, 0, 0, 3);
 
 			$this->RegisterProfileIntegerEx("FAIKIN_Mode", "", "", "", [
 				['1', $this->Translate('heat'),  '', 0xFFFF00],

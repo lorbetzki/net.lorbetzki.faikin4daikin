@@ -92,7 +92,8 @@
             "streamer":"Streamer",
             "activate Live status messages for all variable": "aktivere Live Statusmeldungen für alle Variablen",
             "Live Status": "Live Status",
-            "total consumption":"Gesamtverbrauch"
+            "total consumption":"Gesamtverbrauch",
+            "receive Live status messages from all variable":"Live-Statusmeldungen von allen Variablen empfangen"
         }
     }
 }
