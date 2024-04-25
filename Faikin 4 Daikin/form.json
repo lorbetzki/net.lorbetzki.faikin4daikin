@@ -13,53 +13,9 @@
             "type": "CheckBox", 
             "name": "StatusEmu", 
             "caption": "emulate state" 
-        },
-        {
-            "type": "ExpansionPanel",
-            "caption": "Advanced settings",
-            "items": [
-                { 
-                    "type": "NumberSpinner", 
-                    "name": "setting_otaauto",
-                    "caption": "Over the Air update all x days. 0 deactivate OtA update",
-                    "minimum": 0,
-                    "maximum": 30,
-                    "value": 7,
-                    "suffix": "days" 
-                    
-                },
-                { 
-                    "type": "NumberSpinner", 
-                    "name": "setting_reporting",
-                    "caption": "interval for reporting update, 0 deactivate reporting update",
-                    "value": 60,
-                    "suffix": "seconds" 
-                },
-                { 
-                    "type": "CheckBox", 
-                    "name": "setting_ha",
-                    "value": true,
-                    "caption": "Send Message to HomeAssistant"
-                },
-                { 
-                    "type": "CheckBox", 
-                    "name": "setting_livestatus",
-                    "value": true,
-                    "caption": "receive Live status messages from all variable"
-                },
-                {
-                    "type": "Button", 
-                    "name": "sendSetting", 
-                    "caption": "set settings",
-                    "onClick": [ "$Setting=json_encode(array('otaauto' => $setting_otaauto, 'reporting' => $setting_reporting, 'ha' => $setting_ha, 'livestatus' => $setting_livestatus));",
-                       "IPS_RequestAction($id, 'setManualSettings', $Setting);"
-                    ]
-                }
-            ]
         }
     ],
     "actions": [
-        
         { 
             "type": "Button",
             "name": "reboot", 
@@ -71,6 +27,36 @@
             "name": "reload", 
             "caption": "reload settings",
             "onClick": "IPS_RequestAction($id, 'reload_setting', '');"
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Advanced settings",
+            "items": [
+                { 
+                    "type": "NumberSpinner", 
+                    "name": "setting_reporting",
+                    "caption": "interval for reporting update, 0 deactivate reporting update",
+                    "suffix": "seconds" 
+                },
+                { 
+                    "type": "CheckBox", 
+                    "name": "setting_ha",
+                    "caption": "Send Message to HomeAssistant"
+                },
+                { 
+                    "type": "CheckBox", 
+                    "name": "setting_livestatus",
+                    "caption": "receive Live status messages from all variable"
+                },
+                {
+                    "type": "Button", 
+                    "name": "sendSetting", 
+                    "caption": "set settings",
+                    "onClick": [ "$Setting=json_encode(array('reporting' => $setting_reporting, 'ha' => $setting_ha, 'livestatus' => $setting_livestatus));",
+                       "IPS_RequestAction($id, 'setManualSettings', $Setting);"
+                    ]
+                }
+            ]
         }
     ],
     "status": []

@@ -14,7 +14,6 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			$this->ConnectParent('{C6D2AEB3-6E1F-4B2E-8E69-3A1A00246850}'); //MQTT Server
 			$this->RegisterPropertyString('Hostname', '');
 			$this->RegisterPropertyBoolean('StatusEmu', 'true');
-			$this->RegisterAttributeInteger('setting_otaauto', '7');
 			$this->RegisterAttributeInteger('setting_reporting', '60');
 			$this->RegisterAttributeBoolean('setting_ha', 'true');
 			$this->RegisterAttributeBoolean('silentModeOnStart', 'false');
@@ -65,7 +64,6 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 		{
 			//Never delete this line!
 			parent::ApplyChanges();
-			//$this->SetReceiveDataFilter('.*' . $MQTTTopic . '.*');
 			
 			$Hostname = $this->ReadPropertyString("Hostname");
 			$UID = $this->ReadAttributeString('state_id');
@@ -74,7 +72,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 
 			if (($Hostname) AND $this->Getstatus() == 102)
 			{
-				$this->RequestAction('reload_setting','');
+				$this->ReloadSettings();
 			}
 		}
 
@@ -85,21 +83,23 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 
 			if ($this->Getstatus() == 102 )
 			{
-				$jsonForm["elements"][3]["items"][0]["value"] = $this->ReadAttributeInteger('setting_otaauto');
-				$jsonForm["elements"][3]["items"][1]["value"] = $this->ReadAttributeInteger('setting_reporting');
-				$jsonForm["elements"][3]["items"][2]["value"] = $this->ReadAttributeBoolean('setting_ha');
-				$jsonForm["elements"][3]["items"][3]["value"] = $this->ReadAttributeBoolean('setting_livestatus');
-
+				$jsonForm["actions"][2]["items"][0]["value"] = $this->ReadAttributeInteger('setting_reporting');
+				$jsonForm["actions"][2]["items"][1]["value"] = $this->ReadAttributeBoolean('setting_ha');
+				$jsonForm["actions"][2]["items"][2]["value"] = $this->ReadAttributeBoolean('setting_livestatus');
 			}
 
 			return json_encode($jsonForm);
 		}
 	
-
 		public function ReceiveData($JSONString)
-		{
+		{	
 			$data = json_decode($JSONString, true);
-			
+			$TopicReceived 		= $data['Topic'];
+			$PayloadReceived 		= $data['Payload'];
+
+			$this->SendDebug(__FUNCTION__,"Receive Topic: ".$TopicReceived,0);
+			$this->SendDebug(__FUNCTION__,"Receive Payload: ".$PayloadReceived,0);
+
 			$this->checkDPTable($JSONString);
 		}
 
@@ -113,23 +113,24 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			$encodePayload = $data['Payload'];
 			$Payload = json_decode($encodePayload, true);
 
-			$TopicReceived = $data['Topic'];
+			$this->SendDebug(__FUNCTION__,"RAW data: ".$encodePayload,0);
+
+			$TopicReceived 		= $data['Topic'];
 			$TopicInfo 			= "info/".$Hostname."/status";
 			$TopicState			= "state/".$Hostname;
 			$TopicStatus 		= "state/".$Hostname."/status";
 			$TopicReporting 	= "Faikin/".$Hostname;
 			$TopicError 		= "error/".$Hostname;
-			$TopicSetting 		= "setting/".$Hostname;
 
 			if ($this->ReadAttributeString('state_id'))
 			{
 				$TopicUID			= $this->ReadAttributeString('state_id');
+				$TopicSetting 	= "setting/".$TopicUID;
 			}
 			else
 			{
 				$TopicUID			= "";
 			}
-			$TopicSettingUID 		= "setting/".$TopicUID;
 
 			switch($TopicReceived)
 			{
@@ -170,7 +171,6 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 				break;
 
 				case "$TopicSetting":
-				case "$TopicSettingUID":
 					$WorkTopic = $TopicSetting;
 					$WorkDB = $DPSetting;
 					$IdentPrefix = "setting_";
@@ -201,28 +201,21 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 
 					$DP_Path = $Datapoint['0'];
 					$DP_Desc = $Datapoint['1'];
-					$DP_Type = $Datapoint['2'];
+					$DP_DataType = $Datapoint['2'];
 					$DP_Profile = $Datapoint['3'];
 					$DP_Action = $Datapoint['4'];
 					$DP_Hide = $Datapoint['5'];
 					
-					// for one setting i need to know if its value is false. in this case the value is not in the payload. we put it in
-					if (($DP_Path == "dark") and (array_key_exists($DP_Path, $Payload) == false))
-					{
-						$Payload["dark"] = false;
-					}
-					if (($DP_Path == "ha") and (array_key_exists($DP_Path, $Payload) == false))
-					{
-						$Payload["ha"] = false;
-					}
-					// if DP_Path not in Payload stop. 
+					// if DP_Path not in Payload write it in debug. 
 					if (array_key_exists($DP_Path, $Payload) == false) {
-						$this->SendDebug("Not in Payload","Topic: ".$DP_Path." is not in Payload.", 0);
-						return;
+							$this->SendDebug("Not in Payload","Topic: ".$DP_Path." is not in Payload ".json_encode($WorkTopic), 0);
+							$DP_Value = "";
 					}
-
-					$DP_Value = $Payload[''.$DP_Path.''];
-
+					else
+					{
+						$this->SendDebug("is in Payload","Topic: ".$DP_Path." is in Payload ".json_encode($WorkTopic), 0);	
+						$DP_Value = $Payload[''.$DP_Path.''];
+					}
 					// when we receive the UID from the state/$hostname topic, write it to the attribute
 					if (($DP_Path == "id") and ($WorkTopic == $TopicState))
 					{
@@ -233,6 +226,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 						 }
 					}
 
+				/*
 					// if the value is an array, (in some case used by home, temp or liquid) use the first one
 					
 					if(is_array($DP_Value))
@@ -240,7 +234,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 						$this->SendDebug("Value is an array:","Topic: ".$DP_Path." has more the one value, use the first one: ".$DP_Value[0], 0);
 						$DP_Value = $DP_Value[0];
 					}
-
+*/
 					// make symcon happy to create idents without special characters
 					$DP_Identname = str_replace("-","_",$IdentPrefix.$DP_Path);
 
@@ -248,23 +242,9 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					{
 						$this->SendDebug("Value:","Set ".$DP_Path." to Value ".$DP_Value, 0);
 					}
-					switch ($DP_Type)
-					{
-						case "BOOL":
-							$DP_DataType = 0;
-						break;
-						case "INT":
-							$DP_DataType = 1;
-						break;
-						case "FLOAT":
-							$DP_DataType = 2;
-						break;
-						case "STRING":
-							$DP_DataType = 3;
-						break;
-					}
-
-					// for some values we need to change the type
+				
+				
+					// for some values we need to do special things
 					switch($DP_Path)
 					{
 						case "fan":
@@ -307,30 +287,27 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 							}
 						break;
 						case "Wh":
+							$this->SendDebug("Set Value from UID Topic:","Update ".$DP_Path." to ".$DP_Value / 1000, 0);
 							$DP_Value = $DP_Value / 1000;
 						break;
-					}
-
-					switch($DP_Identname)
-					{
-						case "setting_ha":
+						case "ha":
 							$this->WriteAttributeBoolean('setting_ha',$DP_Value);
 							$this->UpdateFormField("setting_ha", "value", $DP_Value);
+							$this->SendDebug("Receive Setting",$DP_Identname." Read Setting from Faikin and write value ".$DP_Value, 0);
 						break;
-						case "setting_reporting":
+						case "reporting":
 							$this->WriteAttributeInteger('setting_reporting',$DP_Value);
 							$this->UpdateFormField("setting_reporting", "value", $DP_Value);
+							$this->SendDebug("Receive Setting",$DP_Identname." Read Setting from Faikin and write value ".$DP_Value, 0);
 						break;
-						case "setting_otaauto":
-							$this->WriteAttributeInteger('setting_otaauto',$DP_Value);
-							$this->UpdateFormField("setting_otaauto", "value", $DP_Value);
-						break;
-						case "setting_livestatus":
+						case "livestatus":
 							$this->WriteAttributeBoolean('setting_livestatus',$DP_Value);
 							$this->UpdateFormField("setting_livestatus", "value", $DP_Value);
+							$this->SendDebug("Receive Setting",$DP_Identname." Read Setting from Faikin and write value ".$DP_Value, 0);
 						break;
+						
 					}
-
+					
 					// in case the datatype is hidden, dont do anything
 					if (!$DP_Hide)
 					{
@@ -354,7 +331,9 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					}
 
 					// if an update from the Topic UID will be receive make some updates
-					if($TopicUID)
+					
+
+			/*		if($TopicUID)
 					{
 						if (@$this->GetIDForIdent('status_'.$DP_Identname.''))
 						{
@@ -370,7 +349,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 									$this->SetValue('status_'.$DP_Identname, $DP_Value / 1000);
 								break;
 								// this values are ok...
-								case "outside":
+								 case "outside":
 								case "liquid":
 								case "fanrpm":
 								case "comp":
@@ -378,15 +357,15 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 									$this->SetValue('status_'.$DP_Identname, $DP_Value);
 								break;
 								default:
-									$this->SendDebug("ignore Value:","Update status_".$DP_Identname." to ".$DP_Value, 0);
+									$this->SendDebug("ignore Value:","Update ".$DP_Identname." to ".$DP_Value, 0);
 							//		return;
 								break;
 							}						
 						}
-					} 
+					} */
 				}
+			
 			}
-
 		}
 
 		protected function sendMQTT($Topic, $Payload)
@@ -407,7 +386,8 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			$Hostname = $this->ReadPropertyString("Hostname");
 			$StatusEmu = $this->ReadPropertyBoolean("StatusEmu");
 
-			$this->LogMessage("RequestAction : $Ident, $Value",KL_NOTIFY);
+			//$this->LogMessage("RequestAction : $Ident, $Value",KL_NOTIFY);
+			$this->SendDebug(__FUNCTION__,"RequestAction : $Ident, $Value", 0);
 
 			switch ($Ident) {
 				case 'setting_dark':
@@ -420,12 +400,14 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$Topic = 'setting/'.$Hostname;
 					$a = array("ha" => $Value);
 					$this->sendMQTT($Topic, json_encode($a));
+					$this->WriteAttributeBoolean('setting_ha',$Value);
 					//if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;
 				case 'setting_livestatus':
 					$Topic = 'setting/'.$Hostname;
 					$a = array("livestatus" => $Value);
 					$this->sendMQTT($Topic, json_encode($a));
+					$this->WriteAttributeBoolean('setting_livestatus',$Value);
 					//if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;				
 				case 'status_power':
@@ -492,7 +474,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$Topic = 'setting/'.$Hostname;
 					$a = array("reporting" => $Value);
 					$this->sendMQTT($Topic, json_encode($a));
-					//if ($StatusEmu){$this->SetValue($Ident,$Value);}
+					$this->WriteAttributeInteger('setting_reporting',$Value);
 				break;
 				case 'setting_tmin':
 					$Topic = 'setting/'.$Hostname;
@@ -506,18 +488,6 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$this->sendMQTT($Topic, json_encode($a));
 					if ($StatusEmu){$this->SetValue($Ident,$Value);}
 				break;				
-				case 'setting_otahost':
-					$Topic = 'setting/'.$Hostname."/otahost";
-					//$a = array("otahost" => $Value);
-					$this->sendMQTT($Topic, json_encode($Value));
-					if ($StatusEmu){$this->SetValue($Ident,$Value);}
-				break;				
-				case 'setting_otaauto':
-					$Topic = 'setting/'.$Hostname;
-					$a = array("otaauto" => $Value);
-					$this->sendMQTT($Topic, json_encode($a));
-					//if ($StatusEmu){$this->SetValue($Ident,$Value);}
-				break;
 				case 'status_econo':
 					$Topic = 'command/'.$Hostname;
 					$a = array("econo" => $Value);
@@ -558,6 +528,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 				case 'setManualSettings':
 					$Topic = 'setting/'.$Hostname;
 					$this->sendMQTT($Topic, $Value);
+					//$this->ReloadSettings();
 				break;
 				case 'silentModeOnStart':
 					$this->SetSilentModeOnStart($Value);
@@ -609,5 +580,6 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 		public function ReloadSettings()
 		{
 			$this->RequestAction('reload_setting',"");
+			$this->SendDebug(__FUNCTION__,"reloading settings", 0);
 		}
 }
