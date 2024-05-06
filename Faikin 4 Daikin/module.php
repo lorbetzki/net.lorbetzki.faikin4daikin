@@ -68,8 +68,18 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			$Hostname = $this->ReadPropertyString("Hostname");
 			$UID = $this->ReadAttributeString('state_id');
 
-			$this->SetReceiveDataFilter('.*(' .$Hostname.'|'.$UID.').*');
+			//$this->SetReceiveDataFilter('.*('.$Hostname.'|'.$UID.').*');
+			$this->SetReceiveDataFilter('(^'.$UID.'|^info\/'.$Hostname.'|^state\/'.$Hostname.'|^Faikin\/'.$Hostname.'|^error\/'.$Hostname.'|^setting\/'.$Hostname);
 
+			/*
+	$TopicReceived 		= $data['Topic'];
+			$TopicInfo 			= "info/".$Hostname."/status";
+			$TopicState			= "state/".$Hostname;
+			$TopicStatus 		= "state/".$Hostname."/status";
+			$TopicReporting 	= "Faikin/".$Hostname;
+			$TopicError 		= "error/".$Hostname;
+			$TopicSetting 	= "setting/".$TopicUID;
+		*/
 			if (($Hostname) AND $this->Getstatus() == 102)
 			{
 				$this->ReloadSettings();
@@ -226,15 +236,6 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 						 }
 					}
 
-				/*
-					// if the value is an array, (in some case used by home, temp or liquid) use the first one
-					
-					if(is_array($DP_Value))
-					{
-						$this->SendDebug("Value is an array:","Topic: ".$DP_Path." has more the one value, use the first one: ".$DP_Value[0], 0);
-						$DP_Value = $DP_Value[0];
-					}
-*/
 					// make symcon happy to create idents without special characters
 					$DP_Identname = str_replace("-","_",$IdentPrefix.$DP_Path);
 
@@ -286,6 +287,18 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 								break;
 							}
 						break;
+						case "up":
+								//if (@$DP_Value){$DP_Value = true;}else{$DP_Value = false;}
+								if (@$DP_Value)
+								{	
+									$this->SetValue('status_online', true);
+								}	
+								else
+								{
+									$this->SetValue('status_online', false);
+								}
+
+						break;
 						case "Wh":
 							$this->SendDebug("Set Value from UID Topic:","Update ".$DP_Path." to ".$DP_Value / 1000, 0);
 							$DP_Value = $DP_Value / 1000;
@@ -329,40 +342,6 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 						$this->SendDebug("Set Value:","Update ".$DP_Identname." to ".$DP_Value, 0);
 						$this->SetValue($DP_Identname, $DP_Value);
 					}
-
-					// if an update from the Topic UID will be receive make some updates
-					
-
-			/*		if($TopicUID)
-					{
-						if (@$this->GetIDForIdent('status_'.$DP_Identname.''))
-						{
-							switch($DP_Identname)
-							{
-								// see https://github.com/revk/ESP32-Faikin/discussions/121 the terminology is different.. status_temp is the room temperature
-								case "temp":
-									$this->SendDebug("Set Value from UID Topic:","Update status_home to ".$DP_Value, 0);
-									$this->SetValue('status_home', $DP_Value);
-								break;
-								case "Wh":
-									$this->SendDebug("Set Value from UID Topic:","Update status_".$DP_Identname." to ".$DP_Value / 1000, 0);
-									$this->SetValue('status_'.$DP_Identname, $DP_Value / 1000);
-								break;
-								// this values are ok...
-								 case "outside":
-								case "liquid":
-								case "fanrpm":
-								case "comp":
-									$this->SendDebug("Set Value from UID Topic:","Update status_".$DP_Identname." to ".$DP_Value, 0);
-									$this->SetValue('status_'.$DP_Identname, $DP_Value);
-								break;
-								default:
-									$this->SendDebug("ignore Value:","Update ".$DP_Identname." to ".$DP_Value, 0);
-							//		return;
-								break;
-							}						
-						}
-					} */
 				}
 			
 			}

@@ -37,7 +37,8 @@ $DPStatus = [
 $DPState = [
     ['ts',              $this->Translate('Timestamp'),                                                                                                                            VARIABLETYPE_INTEGER, '', false, true],
     ['id',              $this->Translate('UniqueID'),                                                                                                                             VARIABLETYPE_STRING, '', false, true],
-    ['up',              $this->Translate('uptime'),                                                                                                                               VARIABLETYPE_INTEGER, '~UnixTimestampTime', false, true],
+//    ['up',              $this->Translate('uptime'),                                                                                                                               VARIABLETYPE_INTEGER, '~UnixTimestampTime', false, true],
+    ['up',              $this->Translate('online'),                                                                                                                               VARIABLETYPE_BOOLEAN, '~Switch', false, true],
     ['app',             $this->Translate('App'),                                                                                                                                  VARIABLETYPE_STRING, '', false, true],
     ['version',         $this->Translate('Version'),                                                                                                                              VARIABLETYPE_STRING, '', false, true],
     ['build-suffix',    $this->Translate('Firmwarebuild Suffix'),                                                                                                                 VARIABLETYPE_STRING, '', false, true],
@@ -76,6 +77,8 @@ $DPSetting = [
     ['tmax',            $this->Translate('Max temperature'),                                                                                                                      VARIABLETYPE_FLOAT, '~Temperature', true, true],
     ['otahost',         $this->Translate('OTA URL'),                                                                                                                                VARIABLETYPE_STRING, '', true, true],
     ['otaauto',     	$this->Translate('OTA Autoupdate'),                                                                                                                      VARIABLETYPE_INTEGER, '', true, true],
+    ['prefixhost',      $this->Translate('prefixhost'),                                                                                                 VARIABLETYPE_BOOLEAN, '~Switch', false, true],
+    
 ];
 
 $DPError = [
