@@ -69,17 +69,8 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			$UID = $this->ReadAttributeString('state_id');
 
 			//$this->SetReceiveDataFilter('.*('.$Hostname.'|'.$UID.').*');
-			$this->SetReceiveDataFilter('(^'.$UID.'|^info\/'.$Hostname.'|^state\/'.$Hostname.'|^Faikin\/'.$Hostname.'|^error\/'.$Hostname.'|^setting\/'.$Hostname);
+			$this->SetReceiveDataFilter('('.$UID.'|info\/'.$Hostname.'|state\/'.$Hostname.'|Faikin\/'.$Hostname.'|error\/'.$Hostname.'|setting\/'.$Hostname.')');
 
-			/*
-	$TopicReceived 		= $data['Topic'];
-			$TopicInfo 			= "info/".$Hostname."/status";
-			$TopicState			= "state/".$Hostname;
-			$TopicStatus 		= "state/".$Hostname."/status";
-			$TopicReporting 	= "Faikin/".$Hostname;
-			$TopicError 		= "error/".$Hostname;
-			$TopicSetting 	= "setting/".$TopicUID;
-		*/
 			if (($Hostname) AND $this->Getstatus() == 102)
 			{
 				$this->ReloadSettings();
