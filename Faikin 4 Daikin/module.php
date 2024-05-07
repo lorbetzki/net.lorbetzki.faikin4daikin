@@ -69,7 +69,8 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			$UID = $this->ReadAttributeString('state_id');
 
 			//$this->SetReceiveDataFilter('.*('.$Hostname.'|'.$UID.').*');
-			$this->SetReceiveDataFilter('('.$UID.'|info\/'.$Hostname.'|state\/'.$Hostname.'|Faikin\/'.$Hostname.'|error\/'.$Hostname.'|setting\/'.$Hostname.')');
+			// filtering UID or setting/UID or (info|state|Faikin|error|setting|event)/Hostname
+			$this->SetReceiveDataFilter('.*(('.$UID.'|setting\/'.$UID.')|(info|state|Faikin|error|setting|event)\/'.$Hostname.').*');
 
 			if (($Hostname) AND $this->Getstatus() == 102)
 			{
