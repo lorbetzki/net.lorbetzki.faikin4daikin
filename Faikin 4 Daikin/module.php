@@ -228,6 +228,14 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 						 }
 					}
 
+					// if the value is an array, (in some case used by home, temp or liquid) use the second one, 1st = min, 2nd=avg, 3rg=max
+
+					if(is_array($DP_Value))
+					{
+						$this->SendDebug("Value is an array:","Topic: ".$DP_Path." has more than one value, use the first one: ".$DP_Value[1], 0);
+						$DP_Value = $DP_Value[1];
+					}
+
 					// make symcon happy to create idents without special characters
 					$DP_Identname = str_replace("-","_",$IdentPrefix.$DP_Path);
 
