@@ -153,7 +153,20 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 				break;
 
 				case "$TopicReporting":
-					$WorkTopic = false;
+					if ($this->ReadAttributeBoolean('setting_livestatus'))
+					{
+						$WorkTopic = false;
+						$this->SendDebug("Ignore Topic", "ignore reporting state because livestatus is activate",0);
+
+					}
+					else
+					{
+						$WorkTopic = $TopicStatus;
+						$WorkDB = $DPStatus;
+						$IdentPrefix = "status_";
+						$this->SendDebug("known topic",$TopicReceived." with data ".$encodePayload,0);
+						$DP_SORT = 10;
+					}
 				break;
 
 				case "$TopicStatus":
@@ -339,8 +352,14 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 						}
 											
 						// now we can set the value.... yeah!
-						$this->SendDebug("Set Value:","Update ".$DP_Identname." to ".$DP_Value, 0);
-						$this->SetValue($DP_Identname, $DP_Value);
+						if (!empty($DP_Value)){
+							$this->SendDebug("Update Value:","Update ".$DP_Identname." to ".$DP_Value, 0);
+							$this->SetValue($DP_Identname, $DP_Value);
+						}
+						if (empty($DP_Value))
+						{
+							$this->SendDebug("can not Update Value:",$DP_Identname." has no value", 0);
+						}
 					}
 				}
 			
