@@ -49,10 +49,13 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 				['2', $this->Translate('all controls'),  '', 0x00FF00]
 			]);
 
+			$this->RegisterProfileInteger("FAIKIN_ext_Bat", "", "", " mV",0,3100,0);
+
 			$this->RegisterProfileFloat("FAIKIN_Temp", "Temperature", "", " °C", 10, 32, 0.5, 1);
 			$this->RegisterVariableBoolean('silentModeOnStart', $this->Translate('Set fanstate to silent on start'),'~Switch',90);
 			$this->EnableAction('silentModeOnStart', );
 		}
+
 
 		public function Destroy()
 		{
@@ -221,10 +224,10 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$DP_Action = $Datapoint['4'];
 					$DP_Hide = $Datapoint['5'];
 					
-					// if DP_Path not in Payload write it in debug. 
+					// if DP_Path not in Payload write it in debug and return 
 					if (array_key_exists($DP_Path, $Payload) == false) {
 							$this->SendDebug("Not in Payload","Topic: ".$DP_Path." is not in Payload ".json_encode($WorkTopic), 0);
-							$DP_Value = "";
+							return;
 					}
 					else
 					{
@@ -245,6 +248,27 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 
 					if(is_array($DP_Value))
 					{
+						// if BLE sensors is activated
+						if($DP_Path == "ble")
+						{
+							if (!@$this->GetIDForIdent(''.$DP_Identname.''))
+							{
+								$this->MaintainVariable('status_ble_temp', $this->Translate('external BLE sensor: temperature'), VARIABLETYPE_FLOAT, 'FAIKIN_Temp', 10, true); 
+								$this->MaintainVariable('status_ble_hum', $this->Translate('external BLE sensor: humidity'), VARIABLETYPE_FLOAT, '~Humidity.F', 10, true); 
+								$this->MaintainVariable('status_ble_bat', $this->Translate('external BLE sensor: battery voltage'), VARIABLETYPE_INTEGER, 'FAIKIN_ext_Bat', 10, true); 
+
+								$this->SendDebug("MaintainVariable:","Create Variable with IDENT status_ble_temp", 0);
+								$this->SendDebug("MaintainVariable:","Create Variable with IDENT status_ble_hum", 0);
+								$this->SendDebug("MaintainVariable:","Create Variable with IDENT status_ble_bat", 0);
+							}
+							$this->SendDebug("Update Values for ble sensor:","Updating... ". $DP_Path, 0);
+
+							$this->SetValue("status_ble_temp", $DP_Value['temp']);
+							$this->SetValue("status_ble_hum", $DP_Value['hum']);
+							$this->SetValue("status_ble_bat", $DP_Value['bat']);
+							return;
+						}
+						
 						$this->SendDebug("Value is an array:","Topic: ".$DP_Path." has more than one value, use the first one: ".$DP_Value[1], 0);
 						$DP_Value = $DP_Value[1];
 					}
@@ -331,6 +355,20 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 							$this->UpdateFormField("setting_livestatus", "value", $DP_Value);
 							$this->SendDebug("Receive Setting",$DP_Identname." Read Setting from Faikin and write value ".$DP_Value, 0);
 						break;
+						case "autob":
+						case "ipv4":
+							$this->SendDebug("HIER!!!",$DP_Identname." Read Setting from Faikin and write value ".$DP_Value, 0);
+
+							//if ((!$DP_Value) OR ($DP_Value === false))
+							if (!$DP_Value)
+							{	
+								$DP_Value = $this->Translate('not available');
+							}
+								else
+							{
+								$DP_Value = $DP_Value;
+							}
+						break;
 						
 					}
 					
@@ -349,14 +387,14 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 								$this->EnableAction($DP_Identname);
 								$this->SendDebug("EnableAction:","Create Action for IDENT ".$DP_Identname, 0);
 							}
-						}
-											
+						}					
 						// now we can set the value.... yeah!
-						if (!empty($DP_Value)){
+						if (isset($DP_Value)){
 							$this->SendDebug("Update Value:","Update ".$DP_Identname." to ".$DP_Value, 0);
 							$this->SetValue($DP_Identname, $DP_Value);
 						}
-						if (empty($DP_Value))
+
+						if (!isset($DP_Value))
 						{
 							$this->SendDebug("can not Update Value:",$DP_Identname." has no value", 0);
 						}

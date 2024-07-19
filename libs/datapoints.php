@@ -25,12 +25,18 @@ $DPStatus = [
     ['auto0',            $this->Translate('Time to turn off HH:MM, 00:00 is dont turn off. This sets the auto0 setting'),                                                         VARIABLETYPE_STRING, '', false, true],
     ['auto1',            $this->Translate('Time to turn off HH:MM, 00:00 is dont turn off. This sets the auto1 setting'),                                                         VARIABLETYPE_STRING, '', false, true],
     ['autop',            $this->Translate('if we automatically turn on/off power based on temperature'),                                                                          VARIABLETYPE_BOOLEAN, '', false, true],
-    ['comfort',           $this->Translate('comfort airflow mode'),                                                                                                               VARIABLETYPE_BOOLEAN, '~Switch', true, false],
-    ['quiet',           $this->Translate('quiet outdoor unit'),                                                                                                                   VARIABLETYPE_BOOLEAN, '~Switch', true, false],
+    ['autob',            $this->Translate('external BLE sensor ID'),                                                                                                                    VARIABLETYPE_STRING, '', false, false],
+    ['comfort',          $this->Translate('comfort airflow mode'),                                                                                                               VARIABLETYPE_BOOLEAN, '~Switch', true, false],
+    ['quiet',            $this->Translate('quiet outdoor unit'),                                                                                                                   VARIABLETYPE_BOOLEAN, '~Switch', true, false],
     ['sensor',           $this->Translate('intelligent eye sensor'),                                                                                                              VARIABLETYPE_BOOLEAN, '~Switch', true, false],
-    ['streamer',           $this->Translate('streamer'),                                                                                                                          VARIABLETYPE_BOOLEAN, '~Switch', true, false],
-    ['ts',              $this->Translate('Timestamp'),                                                                                                                            VARIABLETYPE_INTEGER, '', false, true],    
-    ['fanfreq',              $this->Translate('fanfreq'),                                                                                                                     VARIABLETYPE_FLOAT, '', false, true],    
+    ['streamer',         $this->Translate('streamer'),                                                                                                                          VARIABLETYPE_BOOLEAN, '~Switch', true, false],
+    ['ts',               $this->Translate('Timestamp'),                                                                                                                            VARIABLETYPE_INTEGER, '', false, true],    
+    ['fanfreq',          $this->Translate('fanfreq'),                                                                                                                     VARIABLETYPE_FLOAT, '', false, true],    
+ //   ['ble_temp',         $this->Translate('external BLE sensor: temperature'),                                                                                                     VARIABLETYPE_FLOAT, 'FAIKIN_Temp', true, false],
+ //   ['ble_hum',         $this->Translate('external BLE sensor: humidity'),                                                                                                           VARIABLETYPE_FLOAT, '~Humidity.F', true, false],
+ //   ['ble_bat',         $this->Translate('external BLE sensor: battery voltage'),                                                                                                  VARIABLETYPE_INTEGER, 'FAIKIN_ext_Bat', true, false],
+    ['ble',             'dummy',                                                                                                     VARIABLETYPE_FLOAT, '', true, true],
+
 ];
 
 //state/hostname
@@ -52,6 +58,7 @@ $DPState = [
     ['rssi',            $this->Translate('RSSi'),                                                                                                                                 VARIABLETYPE_INTEGER, '', false, true],
     ['chan',            $this->Translate('Wifi Channel'),                                                                                                                         VARIABLETYPE_INTEGER, '', false, true],
     ['ipv4',            $this->Translate('IP Address'),                                                                                                                           VARIABLETYPE_STRING, '', false, false],
+
 ];
 
 // /info/hostname/upgrade

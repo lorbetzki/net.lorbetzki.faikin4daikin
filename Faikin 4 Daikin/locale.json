@@ -93,7 +93,12 @@
             "activate Live status messages for all variable": "aktivere Live Statusmeldungen für alle Variablen",
             "Live Status": "Live Status",
             "total consumption":"Gesamtverbrauch",
-            "receive Live status messages from all variable":"Live-Statusmeldungen von allen Variablen empfangen"
+            "receive Live status messages from all variable":"Live-Statusmeldungen von allen Variablen empfangen",
+            "external BLE sensor ID":"externer BLE Sensor ID",
+            "external BLE sensor: temperature":"externer BLE Sensor: Temperatur",
+            "external BLE sensor: humidity":"externer BLE Sensor: Luftfeuchtigkeit",
+            "external BLE sensor: battery voltage":"externer BLE Sensor: Batterie",
+            "not available": "nicht verfügbar"
         }
     }
 }
