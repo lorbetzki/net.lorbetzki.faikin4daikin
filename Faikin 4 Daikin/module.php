@@ -21,6 +21,8 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			
 			$this->RegisterAttributeBoolean('setting_livestatus', 'false');
 
+			$this->RegisterAttributeBoolean('ble_sensor_found', 'false');
+
 			$this->RegisterProfileInteger("FAIKIN_rpm", "", "", " rpm", 0, 0, 0);
 
 			$this->RegisterProfileFloat("FAIKIN_kwh", "", "", " kWh", 0, 0, 0, 3);
@@ -73,8 +75,10 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 
 			//$this->SetReceiveDataFilter('.*('.$Hostname.'|'.$UID.').*');
 			// filtering UID or setting/UID or (info|state|Faikin|error|setting|event)/Hostname
-			$this->SetReceiveDataFilter('.*(('.$UID.'|setting\/'.$UID.')|(info|state|Faikin|error|setting|event)\/'.$Hostname.').*');
-
+			//$this->SetReceiveDataFilter('.*(('.$UID.'|setting\/'.$UID.')|(info|state|Faikin|error|setting|event)\/'.$Hostname.').*');
+			
+			$this->SetReceiveDataFilter('.*('.$UID.'|'.$Hostname.').*');
+			
 			if (($Hostname) AND $this->Getstatus() == 102)
 			{
 				$this->ReloadSettings();
@@ -113,108 +117,38 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			$Hostname = $this->ReadPropertyString("Hostname");
 
 			require_once __DIR__ . '/../libs/datapoints.php';
-			$data = json_decode($data, true);
 
+			$data = json_decode($data, true);
 			$encodePayload = $data['Payload'];
 			$Payload = json_decode($encodePayload, true);
 
-			$this->SendDebug(__FUNCTION__,"RAW data: ".$encodePayload,0);
-
 			$TopicReceived 		= $data['Topic'];
-			$TopicInfo 			= "info/".$Hostname."/status";
-			$TopicState			= "state/".$Hostname;
-			$TopicStatus 		= "state/".$Hostname."/status";
-			$TopicReporting 	= "Faikin/".$Hostname;
-			$TopicError 		= "error/".$Hostname;
-
+			
 			if ($this->ReadAttributeString('state_id'))
 			{
 				$TopicUID			= $this->ReadAttributeString('state_id');
-				$TopicSetting 	= "setting/".$TopicUID;
 			}
 			else
 			{
 				$TopicUID			= "";
 			}
 
-			switch($TopicReceived)
+
+			if(!is_array($Payload)){
+							$this->SendDebug(__FUNCTION__,"Topic: ".$TopicUID." has no array, skip this Topic",0);
+							return;
+			}
+			else
 			{
-				case "$TopicInfo":
-					$WorkTopic = $TopicInfo;
-					$WorkDB = $DPInfo;
-					$IdentPrefix = "info_";
-					$this->SendDebug("known topic",$TopicReceived." with data ".$encodePayload,0);
-					$DP_SORT = 30;
-				break;
-
-				case "$TopicState":
-					$WorkTopic = $TopicState;
-					$WorkDB = $DPState;
-					$IdentPrefix = "state_";
-					$this->SendDebug("known topic",$TopicReceived." with data ".$encodePayload,0);
-					$DP_SORT = 20;
-				break;
-
-				case "$TopicReporting":
-					if ($this->ReadAttributeBoolean('setting_livestatus'))
-					{
-						$WorkTopic = false;
-						$this->SendDebug("Ignore Topic", "ignore reporting state because livestatus is activate",0);
-
-					}
-					else
-					{
-						$WorkTopic = $TopicStatus;
-						$WorkDB = $DPStatus;
-						$IdentPrefix = "status_";
-						$this->SendDebug("known topic",$TopicReceived." with data ".$encodePayload,0);
-						$DP_SORT = 10;
-					}
-				break;
-
-				case "$TopicStatus":
-					$WorkTopic = $TopicStatus;
-					$WorkDB = $DPStatus;
-					$IdentPrefix = "status_";
-					$this->SendDebug("known topic",$TopicReceived." with data ".$encodePayload,0);
-					$DP_SORT = 10;
-				break;
-
-				case "$TopicError":
-					$WorkTopic = $TopicError;
-					$WorkDB = $DPError;
-					$IdentPrefix = "error_";
-					$this->SendDebug("known topic",$TopicError." with data ".$encodePayload,0);
-					$DP_SORT = 90;
-				break;
-
-				case "$TopicSetting":
-					$WorkTopic = $TopicSetting;
-					$WorkDB = $DPSetting;
-					$IdentPrefix = "setting_";
-					$this->SendDebug("known topic",$TopicSetting." with data ".$encodePayload,0);
-					$DP_SORT = 50;
-				break;
-
-				case "$TopicUID":
-					$WorkTopic = $TopicUID;
-					$WorkDB = $DPUID;
-					$IdentPrefix = "";
-					$this->SendDebug("known topic",$TopicUID." with data ".$encodePayload,0);
-					$DP_SORT = 10;
-				break;
-
-				default:
-					$this->SendDebug("Unknown topic",$TopicReceived." with data ".$encodePayload,0);
-				return;
+				$this->SendDebug(__FUNCTION__,"Topic: ".$TopicUID." with data ".$encodePayload,0);
 			}
 
-			if ($WorkTopic){
-				$this->SendDebug("checkDPTable:","Worktopic defined to ".$WorkTopic, 0);
-
-				foreach($WorkDB as $Datapoint)
+			foreach($Payload as $DataKey=>$DataVar)
+			{
+				$this->SendDebug(__FUNCTION__,"Variable in Payload found: ".$DataKey,0);
+			
+				foreach($DP as $Datapoint)
 				{
-
 					//  Topicpath,           Description, Type,   SymconProfile,        Action, hide
 
 					$DP_Path = $Datapoint['0'];
@@ -223,184 +157,210 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$DP_Profile = $Datapoint['3'];
 					$DP_Action = $Datapoint['4'];
 					$DP_Hide = $Datapoint['5'];
-					
-					// if DP_Path not in Payload write it in debug and return 
-					if (array_key_exists($DP_Path, $Payload) == false) {
-							$this->SendDebug("Not in Payload","Topic: ".$DP_Path." is not in Payload ".json_encode($WorkTopic), 0);
-							return;
-					}
-					else
-					{
-						$this->SendDebug("is in Payload","Topic: ".$DP_Path." is in Payload ".json_encode($WorkTopic), 0);	
-						$DP_Value = $Payload[''.$DP_Path.''];
-					}
+					$DP_IdentPrefix  = $Datapoint['6'];
+
 					// when we receive the UID from the state/$hostname topic, write it to the attribute
-					if (($DP_Path == "id") and ($WorkTopic == $TopicState))
+					if (($DP_Path == "id"))
 					{
 						if (!$this->ReadAttributeString('state_id'))
-						 {
-							$this->SendDebug("Missing UID found","Topic: ".$DP_Path." set id ".$DP_Value." as attribute.", 0);
+							{
+							$this->SendDebug(__FUNCTION__,"Topic: ".$DP_Path." set id ".$DP_Value." as attribute.", 0);
 							$this->WriteAttributeString('state_id',"$DP_Value");
-						 }
+							}
 					}
 
-					// if the value is an array, (in some case used by home, temp or liquid) use the second one, 1st = min, 2nd=avg, 3rg=max
-
-					if(is_array($DP_Value))
+					// if a BLE Sensor exist, create and set value for BLE sensor, temp, humitdy and battery voltage
+					if($this->ReadAttributeBoolean('ble_sensor_found') and (($DP_Path == "ble") or ($DP_Path == "autop") or ($DP_Path == "autot") ))
 					{
-						// if BLE sensors is activated
-						if($DP_Path == "ble")
+						if (isset($Payload[''.$DP_Path.''])){
+						$DP_Value = $Payload[''.$DP_Path.''];
+						}else
 						{
-							if (!@$this->GetIDForIdent(''.$DP_Identname.''))
-							{
-								$this->MaintainVariable('status_ble_temp', $this->Translate('external BLE sensor: temperature'), VARIABLETYPE_FLOAT, 'FAIKIN_Temp', 10, true); 
-								$this->MaintainVariable('status_ble_hum', $this->Translate('external BLE sensor: humidity'), VARIABLETYPE_FLOAT, '~Humidity.F', 10, true); 
-								$this->MaintainVariable('status_ble_bat', $this->Translate('external BLE sensor: battery voltage'), VARIABLETYPE_INTEGER, 'FAIKIN_ext_Bat', 10, true); 
-
-								$this->SendDebug("MaintainVariable:","Create Variable with IDENT status_ble_temp", 0);
-								$this->SendDebug("MaintainVariable:","Create Variable with IDENT status_ble_hum", 0);
-								$this->SendDebug("MaintainVariable:","Create Variable with IDENT status_ble_bat", 0);
-							}
-							$this->SendDebug("Update Values for ble sensor:","Updating... ". $DP_Path, 0);
-
-							$this->SetValue("status_ble_temp", $DP_Value['temp']);
-							$this->SetValue("status_ble_hum", $DP_Value['hum']);
-							$this->SetValue("status_ble_bat", $DP_Value['bat']);
 							return;
 						}
-						
-						$this->SendDebug("Value is an array:","Topic: ".$DP_Path." has more than one value, use the first one: ".$DP_Value[1], 0);
-						$DP_Value = $DP_Value[1];
-					}
+						switch($DP_Path)
+						{
+							case "ble":	// if BLE sensors is activated
+								$this->SendDebug(__FUNCTION__,"BLE Sensor found, getting data", 0);
 
-					// make symcon happy to create idents without special characters
-					$DP_Identname = str_replace("-","_",$IdentPrefix.$DP_Path);
-
-					if (!$DP_Hide)
-					{
-						$this->SendDebug("Value:","Set ".$DP_Path." to Value ".$DP_Value, 0);
-					}
-				
-				
-					// for some values we need to do special things
-					switch($DP_Path)
-					{
-						case "fan":
-							switch($DP_Value)
-							{
-								case 1:
-								case 2:
-								case 3:
-								case 4:
-								case 5:
-									$DP_Value = $DP_Value;
-								break;
-								case "A":
-									$DP_Value = 0;
-								break;
-								case "B":
-								case "Q":
-									$DP_Value = -1;
-								break;
-							}
-						break;
-						case "mode":
-							switch($DP_Value)
-							{
-								case "A":
-									$DP_Value = 3;
-									break;
-								case "C":
-									$DP_Value = 2;
-									break;
-								case "D":
-									$DP_Value = 5;
-									break;
-								case "F":
-									$DP_Value = 4;
-								break;
-								case "H":
-									$DP_Value = 1;
-								break;
-							}
-						break;
-						case "up":
-								//if (@$DP_Value){$DP_Value = true;}else{$DP_Value = false;}
-								if (@$DP_Value)
-								{	
-									$this->SetValue('status_online', true);
-								}	
-								else
+								if ((!@$this->GetIDForIdent('status_ble_temp')) or (!@$this->GetIDForIdent('status_ble_hum')) or (!@$this->GetIDForIdent('status_ble_bat')) )
 								{
-									$this->SetValue('status_online', false);
+									$this->MaintainVariable('status_ble_temp', $this->Translate('external BLE sensor: temperature'), VARIABLETYPE_FLOAT, 'FAIKIN_Temp', 10, true); 
+									$this->SendDebug(__FUNCTION__,"Create Variable with IDENT status_ble_temp", 0);
+
+									$this->MaintainVariable('status_ble_hum', $this->Translate('external BLE sensor: humidity'), VARIABLETYPE_FLOAT, '~Humidity.F', 10, true); 
+									$this->SendDebug(__FUNCTION__,"Create Variable with IDENT status_ble_hum", 0);
+
+									$this->MaintainVariable('status_ble_bat', $this->Translate('external BLE sensor: battery voltage'), VARIABLETYPE_INTEGER, 'FAIKIN_ext_Bat', 10, true); 
+									$this->SendDebug(__FUNCTION__,"Create Variable with IDENT status_ble_bat", 0);
+
 								}
+								$this->SendDebug("Update Values for ble sensor:","Updating... ". $DP_Path . " ".json_encode($DP_Value), 0);
 
-						break;
-						case "Wh":
-							$this->SendDebug("Set Value from UID Topic:","Update ".$DP_Path." to ".$DP_Value / 1000, 0);
-							$DP_Value = $DP_Value / 1000;
-						break;
-						case "ha":
-							$this->WriteAttributeBoolean('setting_ha',$DP_Value);
-							$this->UpdateFormField("setting_ha", "value", $DP_Value);
-							$this->SendDebug("Receive Setting",$DP_Identname." Read Setting from Faikin and write value ".$DP_Value, 0);
-						break;
-						case "reporting":
-							$this->WriteAttributeInteger('setting_reporting',$DP_Value);
-							$this->UpdateFormField("setting_reporting", "value", $DP_Value);
-							$this->SendDebug("Receive Setting",$DP_Identname." Read Setting from Faikin and write value ".$DP_Value, 0);
-						break;
-						case "livestatus":
-							$this->WriteAttributeBoolean('setting_livestatus',$DP_Value);
-							$this->UpdateFormField("setting_livestatus", "value", $DP_Value);
-							$this->SendDebug("Receive Setting",$DP_Identname." Read Setting from Faikin and write value ".$DP_Value, 0);
-						break;
-						case "autob":
-						case "ipv4":
-							$this->SendDebug("HIER!!!",$DP_Identname." Read Setting from Faikin and write value ".$DP_Value, 0);
+								$this->SetValue("status_ble_temp", $DP_Value['temp']);
+								$this->SetValue("status_ble_hum", $DP_Value['hum']);
+								$this->SetValue("status_ble_bat", $DP_Value['bat']);
+							break;
 
-							//if ((!$DP_Value) OR ($DP_Value === false))
-							if (!$DP_Value)
-							{	
-								$DP_Value = $this->Translate('not available');
-							}
-								else
-							{
-								$DP_Value = $DP_Value;
-							}
-						break;
-						
+							case "autot":	// if autot
+								$this->SendDebug(__FUNCTION__,"Faikin auto temperature found, getting data", 0);
+
+								if ((!@$this->GetIDForIdent('status_autot')))
+								{
+									$this->MaintainVariable('status_autot', $this->Translate('Faikin auto mode target Temperature'), VARIABLETYPE_FLOAT, 'FAIKIN_Temp', 10, true); 
+									$this->SendDebug(__FUNCTION__,"Create Variable with IDENT status_autot", 0);
+								}
+								$this->SendDebug("Update Values for Faikin auto temperature :","Updating... ". $DP_Path . " ".json_encode($DP_Value), 0);
+								$this->SetValue("status_autot", $DP_Value);
+							break;
+
+							case "autop":	// if autop
+								$this->SendDebug(__FUNCTION__,"Faikin auto mode found, getting data", 0);
+
+								if ((!@$this->GetIDForIdent('status_autop')))
+								{
+									$this->MaintainVariable('status_autop', $this->Translate('Faikin auto mode'), VARIABLETYPE_BOOLEAN, '~Switch', 10, true); 
+									$this->SendDebug(__FUNCTION__,"Create Variable with IDENT status_autop", 0);
+								}
+								$this->SendDebug("Update Values for Faikin auto mode:","Updating... ". $DP_Path . " ".json_encode($DP_Value), 0);
+								$this->SetValue("status_autop", $DP_Value);
+							break;
+						}
 					}
 					
-					// in case the datatype is hidden, dont do anything
-					if (!$DP_Hide)
+					// compare DP_Path with Datakey
+					if (fnmatch($DP_Path, $DataKey))
 					{
-
-						if (!@$this->GetIDForIdent(''.$DP_Identname.''))
+						$this->SendDebug(__FUNCTION__,"Variable: ".$DP_Path." is found in Datapointlist: ".$DataKey, 0);
+					
+						if(!$DP_Hide)
 						{
-
-							$this->MaintainVariable($DP_Identname, $this->Translate("$DP_Desc"), $DP_DataType, "$DP_Profile", $DP_SORT, true); 
-							$this->SendDebug("MaintainVariable:","Create Variable with IDENT ".$DP_Identname, 0);
-
-							if ($DP_Action)
+							$this->SendDebug(__FUNCTION__," Variable: ".$DP_Path." is marked as viewable.", 0);
+						
+							// Variable exist, now set value
+							$DP_Value = $Payload[''.$DP_Path.''];
+							
+					
+							// if the value is an array, (in some case used by home, temp or liquid) use the second one, 1st = min, 2nd=avg, 3rg=max
+							if(is_array($DP_Value))
 							{
-								$this->EnableAction($DP_Identname);
-								$this->SendDebug("EnableAction:","Create Action for IDENT ".$DP_Identname, 0);
+								$this->SendDebug(__FUNCTION__,"Topic: ".$DP_Path." has more than one value, use the first one: ".$DP_Value[1], 0);
+								$DP_Value = $DP_Value[1];
 							}
-						}					
-						// now we can set the value.... yeah!
-						if (isset($DP_Value)){
-							$this->SendDebug("Update Value:","Update ".$DP_Identname." to ".$DP_Value, 0);
-							$this->SetValue($DP_Identname, $DP_Value);
-						}
+						
+							// make symcon happy to create idents without special characters
+							$DP_Identname = str_replace("-","_",$DP_IdentPrefix .$DP_Path);
 
-						if (!isset($DP_Value))
-						{
-							$this->SendDebug("can not Update Value:",$DP_Identname." has no value", 0);
+							// for some values we need to do special things
+							switch($DP_Path)
+							{
+								case "fan":
+									switch($DP_Value)
+									{
+										case 1:
+										case 2:
+										case 3:
+										case 4:
+										case 5:
+											$DP_Value = $DP_Value;
+										break;
+										case "A":
+											$DP_Value = 0;
+										break;
+										case "B":
+										case "Q":
+											$DP_Value = -1;
+										break;
+									}
+								break;
+								case "mode":
+									switch($DP_Value)
+									{
+										case "A":
+											$DP_Value = 3;
+											break;
+										case "C":
+											$DP_Value = 2;
+											break;
+										case "D":
+											$DP_Value = 5;
+											break;
+										case "F":
+											$DP_Value = 4;
+										break;
+										case "H":
+											$DP_Value = 1;
+										break;
+									}
+								break;
+								case "Wh":
+									$this->SendDebug(__FUNCTION__,"Update ".$DP_Path." to ".$DP_Value / 1000, 0);
+									$DP_Value = $DP_Value / 1000;
+								break;
+								case "ha":
+									$this->WriteAttributeBoolean('setting_ha',$DP_Value);
+									$this->UpdateFormField("setting_ha", "value", $DP_Value);
+									$this->SendDebug(__FUNCTION__,$DP_Identname." Read Setting from Faikin and write value ".$DP_Value, 0);
+								break;
+								case "reporting":
+									$this->WriteAttributeInteger('setting_reporting',$DP_Value);
+									$this->UpdateFormField("setting_reporting", "value", $DP_Value);
+									$this->SendDebug(__FUNCTION__,$DP_Identname." Read Setting from Faikin and write value ".$DP_Value, 0);
+								break;
+								case "livestatus":
+									$this->WriteAttributeBoolean('setting_livestatus',$DP_Value);
+									$this->UpdateFormField("setting_livestatus", "value", $DP_Value);
+									$this->SendDebug(__FUNCTION__,$DP_Identname." Read Setting from Faikin and write value ".$DP_Value, 0);
+								break;
+								case "autob":
+									if (!$DP_Value)
+									{	
+										$DP_Value = $this->Translate('not available');
+									}
+										else
+									{
+										$DP_Value = $DP_Value;
+										if (!$this->ReadAttributeBoolean('ble_sensor_found')){$this->WriteAttributeBoolean('ble_sensor_found', true);}
+									}
+								break;
+								case "ipv4":
+									if (!$DP_Value)
+									{	
+										$DP_Value = $this->Translate('not available');
+									}
+										else
+									{
+										$DP_Value = $DP_Value;
+									}
+								break;
+								
+							}
+								
+							if (!@$this->GetIDForIdent(''.$DP_Identname.''))
+							{
+
+								$this->MaintainVariable($DP_Identname, $this->Translate("$DP_Desc"), $DP_DataType, "$DP_Profile", 0, true); 
+								$this->SendDebug(__FUNCTION__,"Create Variable with IDENT ".$DP_Identname, 0);
+
+								if ($DP_Action)
+								{
+									$this->EnableAction($DP_Identname);
+									$this->SendDebug(__FUNCTION__,"Create Action for IDENT ".$DP_Identname, 0);
+								}
+							}					
+							// now we can set the value.... yeah!
+							if (isset($DP_Value)){
+								$this->SendDebug(__FUNCTION__,"Update ".$DP_Identname." to ".$DP_Value, 0);
+								$this->SetValue($DP_Identname, $DP_Value);
+							}
+
+							if (!isset($DP_Value))
+							{
+								$this->SendDebug(__FUNCTION__,$DP_Identname." has no value", 0);
+							}
 						}
 					}
 				}
-			
 			}
 		}
 

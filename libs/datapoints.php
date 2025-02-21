@@ -1,111 +1,86 @@
 <?php
 
-//state/hostname/status
-$DPStatus = [
-//  Topicpath,           Description,                                                                                                                                             Type,   SymconProfile,        Action, hide
-    ['protocol',         $this->Translate('used protocol'),                                                                                                                       VARIABLETYPE_STRING, '', false, true],
-    ['online',           $this->Translate('Faikin is Online'),                                                                                                                    VARIABLETYPE_BOOLEAN, '~Switch', false, false],
-    ['home',             $this->Translate('Temperature at remote / measured'),                                                                                                    VARIABLETYPE_FLOAT, '~Temperature', false, false],
-    ['heat',             $this->Translate('in heating mode'),                                                                                                                     VARIABLETYPE_BOOLEAN, 'Switch', false, false],
-    ['fanrpm',           $this->Translate('Fanspeed in RPM'),                                                                                                                     VARIABLETYPE_INTEGER, 'FAIKIN_rpm', false, false],
-    ['comp',             $this->Translate('compressor utilization'),                                                                                                              VARIABLETYPE_INTEGER, '~Intensity.100', false, false],
-    ['outside',          $this->Translate('Outside temperature'),                                                                                                                 VARIABLETYPE_FLOAT, '~Temperature', false, false],
-    ['liquid',           $this->Translate('Liquid coolant feed temperature'),                                                                                                     VARIABLETYPE_FLOAT, '~Temperature', false, false],
-    ['Wh',              $this->Translate('total consumption'),                                                                                                                    VARIABLETYPE_FLOAT, 'FAIKIN_kwh', false, false],
-    ['power',            $this->Translate('AC is powered on'),                                                                                                                    VARIABLETYPE_BOOLEAN, '~Switch', true, false],
-    ['mode',             $this->Translate('Mode'),                                                                                                                                VARIABLETYPE_INTEGER, 'FAIKIN_Mode', true, false],
-    ['temp',             $this->Translate('Set Roomtemperature'),                                                                                                                 VARIABLETYPE_FLOAT, 'FAIKIN_Temp', true, false],
-    ['fan',              $this->Translate('Fan Level'),                                                                                                                           VARIABLETYPE_INTEGER, 'FAIKIN_Fanlevel', true, false],
-    ['swingh',           $this->Translate('horizontal louvre swing'),                                                                                                             VARIABLETYPE_BOOLEAN, '~Switch', true, false],
-    ['swingv',           $this->Translate('vertical louvre swing'),                                                                                                               VARIABLETYPE_BOOLEAN, '~Switch', true, false],
-    ['econo',            $this->Translate('Ecomode'),                                                                                                                             VARIABLETYPE_BOOLEAN, '~Switch', true, false],
-    ['powerful',         $this->Translate('powerfull mode'),                                                                                                                      VARIABLETYPE_BOOLEAN, '~Switch', true, false],
-    ['autor',            $this->Translate('Range for automation, 0.0 means off - this sets the autor setting to 10 times this value'),                                            VARIABLETYPE_FLOAT, '', false, true],
-    ['autot',            $this->Translate('Target temp for automation, This sets the autot setting to 10 times this value'),                                                      VARIABLETYPE_FLOAT, '', false, true],
-    ['auto0',            $this->Translate('Time to turn off HH:MM, 00:00 is dont turn off. This sets the auto0 setting'),                                                         VARIABLETYPE_STRING, '', false, true],
-    ['auto1',            $this->Translate('Time to turn off HH:MM, 00:00 is dont turn off. This sets the auto1 setting'),                                                         VARIABLETYPE_STRING, '', false, true],
-    ['autop',            $this->Translate('if we automatically turn on/off power based on temperature'),                                                                          VARIABLETYPE_BOOLEAN, '', false, true],
-    ['autob',            $this->Translate('external BLE sensor ID'),                                                                                                                    VARIABLETYPE_STRING, '', false, false],
-    ['comfort',          $this->Translate('comfort airflow mode'),                                                                                                               VARIABLETYPE_BOOLEAN, '~Switch', true, false],
-    ['quiet',            $this->Translate('quiet outdoor unit'),                                                                                                                   VARIABLETYPE_BOOLEAN, '~Switch', true, false],
-    ['sensor',           $this->Translate('intelligent eye sensor'),                                                                                                              VARIABLETYPE_BOOLEAN, '~Switch', true, false],
-    ['streamer',         $this->Translate('streamer'),                                                                                                                          VARIABLETYPE_BOOLEAN, '~Switch', true, false],
-    ['ts',               $this->Translate('Timestamp'),                                                                                                                            VARIABLETYPE_INTEGER, '', false, true],    
-    ['fanfreq',          $this->Translate('fanfreq'),                                                                                                                     VARIABLETYPE_FLOAT, '', false, true],    
- //   ['ble_temp',         $this->Translate('external BLE sensor: temperature'),                                                                                                     VARIABLETYPE_FLOAT, 'FAIKIN_Temp', true, false],
- //   ['ble_hum',         $this->Translate('external BLE sensor: humidity'),                                                                                                           VARIABLETYPE_FLOAT, '~Humidity.F', true, false],
- //   ['ble_bat',         $this->Translate('external BLE sensor: battery voltage'),                                                                                                  VARIABLETYPE_INTEGER, 'FAIKIN_ext_Bat', true, false],
-    ['ble',             'dummy',                                                                                                     VARIABLETYPE_FLOAT, '', true, true],
-
-];
-
-//state/hostname
-$DPState = [
-    ['ts',              $this->Translate('Timestamp'),                                                                                                                            VARIABLETYPE_INTEGER, '', false, true],
-    ['id',              $this->Translate('UniqueID'),                                                                                                                             VARIABLETYPE_STRING, '', false, true],
-//    ['up',              $this->Translate('uptime'),                                                                                                                               VARIABLETYPE_INTEGER, '~UnixTimestampTime', false, true],
-    ['up',              $this->Translate('online'),                                                                                                                               VARIABLETYPE_BOOLEAN, '~Switch', false, true],
-    ['app',             $this->Translate('App'),                                                                                                                                  VARIABLETYPE_STRING, '', false, true],
-    ['version',         $this->Translate('Version'),                                                                                                                              VARIABLETYPE_STRING, '', false, true],
-    ['build-suffix',    $this->Translate('Firmwarebuild Suffix'),                                                                                                                 VARIABLETYPE_STRING, '', false, true],
-    ['build',           $this->Translate('Firmwarebuild'),                                                                                                                        VARIABLETYPE_STRING, '', false, true],
-    ['flash',           $this->Translate('flash used'),                                                                                                                           VARIABLETYPE_INTEGER, '', false, true],
-    ['rst',             $this->Translate('rst'),                                                                                                                                  VARIABLETYPE_INTEGER, '', false, true],
-    ['mem',             $this->Translate('memory used'),                                                                                                                          VARIABLETYPE_INTEGER, '', false, true],
-    ['spi',             $this->Translate('spi'),                                                                                                                                  VARIABLETYPE_INTEGER, '', false, true],
-    ['ssid',            $this->Translate('connected to SSID'),                                                                                                                    VARIABLETYPE_STRING, '', false, true],
-    ['bssid',           $this->Translate('BBSid'),                                                                                                                                VARIABLETYPE_STRING, '', false, true],
-    ['rssi',            $this->Translate('RSSi'),                                                                                                                                 VARIABLETYPE_INTEGER, '', false, true],
-    ['chan',            $this->Translate('Wifi Channel'),                                                                                                                         VARIABLETYPE_INTEGER, '', false, true],
-    ['ipv4',            $this->Translate('IP Address'),                                                                                                                           VARIABLETYPE_STRING, '', false, false],
-
-];
-
-// /info/hostname/upgrade
-$DPInfo = [
-    ['ts',              $this->Translate('Timestamp'),                                                                                                                            VARIABLETYPE_INTEGER, '',  false, true],
-    ['url',             $this->Translate('URL to look for an Update'),                                                                                                            VARIABLETYPE_STRING, '',  false, false],
-    ['version',         $this->Translate('Version'),                                                                                                                              VARIABLETYPE_STRING, '',  false, false],
-    ['project',         $this->Translate('Projectname'),                                                                                                                          VARIABLETYPE_STRING, '',  false, true],
-    ['time',            $this->Translate('Time'),                                                                                                                                 VARIABLETYPE_STRING, '',  false, true],
-    ['date',            $this->Translate('Date'),                                                                                                                                 VARIABLETYPE_STRING, '',  false, true],
-    ['up-to-date',      $this->Translate('Firmware is up to date'),                                                                                                               VARIABLETYPE_BOOLEAN, '~Switch',  false, false],    
-
-];
-
-// setting/hostname hide all of them, cause we put them in the configurationform
-$DPSetting = [
-    ['webcontrol',	    $this->Translate('Webcontrol'),                                                                                                                           VARIABLETYPE_INTEGER, 'FAIKIN_Webcontrol', true, true],
-    ['ha',              $this->Translate('send Home-Assistant message via MQTT'),                                                                                                 VARIABLETYPE_BOOLEAN, '~Switch', true, true],
-    ['reporting',       $this->Translate('reporting state in seconds'),                                                                                                           VARIABLETYPE_INTEGER, '',  true, true],
-    ['dark',            $this->Translate('Shutdown LED'),                                                                                                                         VARIABLETYPE_BOOLEAN, '~Switch', true, false],
-    ['livestatus',      $this->Translate('Live Status'),                                                                                                                         VARIABLETYPE_BOOLEAN, '~Switch', true, true],
-    ['tmin',            $this->Translate('Min temperature'),                                                                                                                      VARIABLETYPE_FLOAT, '~Temperature', true, true],
-    ['tmax',            $this->Translate('Max temperature'),                                                                                                                      VARIABLETYPE_FLOAT, '~Temperature', true, true],
-    ['otahost',         $this->Translate('OTA URL'),                                                                                                                                VARIABLETYPE_STRING, '', true, true],
-    ['otaauto',     	$this->Translate('OTA Autoupdate'),                                                                                                                      VARIABLETYPE_INTEGER, '', true, true],
-    ['prefixhost',      $this->Translate('prefixhost'),                                                                                                 VARIABLETYPE_BOOLEAN, '~Switch', false, true],
+//state/hostname/status or hostname/state/status
+$DP = [
+    //  Topicpath,           Description,                                                                                                           Type,                   SymconProfile,        Action, hide, Identprefix
+        ['protocol',         $this->Translate('used protocol'),                                                                                     VARIABLETYPE_STRING,    '',                 false, true, 'status_'],
+        ['online',           $this->Translate('Faikin is Online'),                                                                                  VARIABLETYPE_BOOLEAN,   '~Switch',          false, false, 'status_'],
+        ['home',             $this->Translate('Temperature at remote / measured'),                                                                  VARIABLETYPE_FLOAT,     '~Temperature',     false, false, 'status_'],
+        ['heat',             $this->Translate('in heating mode'),                                                                                   VARIABLETYPE_BOOLEAN,   'Switch',           false, false, 'status_'],
+        ['fanrpm',           $this->Translate('Fanspeed in RPM'),                                                                                   VARIABLETYPE_INTEGER,   'FAIKIN_rpm',       false, false, 'status_'],
+        ['comp',             $this->Translate('compressor utilization'),                                                                            VARIABLETYPE_INTEGER,   '~Intensity.100',   false, false, 'status_'],
+        ['outside',          $this->Translate('Outside temperature'),                                                                               VARIABLETYPE_FLOAT,     '~Temperature',     false, false, 'status_'],
+        ['liquid',           $this->Translate('Liquid coolant feed temperature'),                                                                   VARIABLETYPE_FLOAT,     '~Temperature',     false, false, 'status_'],
+        ['Wh',               $this->Translate('total consumption'),                                                                                 VARIABLETYPE_FLOAT,     'FAIKIN_kwh',       false, false, 'status_'],
+        ['power',            $this->Translate('AC is powered on'),                                                                                  VARIABLETYPE_BOOLEAN,   '~Switch',          true, false, 'status_'],
+        ['mode',             $this->Translate('Mode'),                                                                                              VARIABLETYPE_INTEGER,   'FAIKIN_Mode',      true, false, 'status_'],
+        ['temp',             $this->Translate('Set Roomtemperature'),                                                                               VARIABLETYPE_FLOAT,     'FAIKIN_Temp',      true, false, 'status_'],
+        ['fan',              $this->Translate('Fan Level'),                                                                                         VARIABLETYPE_INTEGER,   'FAIKIN_Fanlevel',  true, false, 'status_'],
+        ['swingh',           $this->Translate('horizontal louvre swing'),                                                                           VARIABLETYPE_BOOLEAN,   '~Switch',          true, false, 'status_'],
+        ['swingv',           $this->Translate('vertical louvre swing'),                                                                             VARIABLETYPE_BOOLEAN,   '~Switch',          true, false, 'status_'],
+        ['econo',            $this->Translate('Ecomode'),                                                                                           VARIABLETYPE_BOOLEAN,   '~Switch',          true, false, 'status_'],
+        ['powerful',         $this->Translate('powerfull mode'),                                                                                    VARIABLETYPE_BOOLEAN,   '~Switch',          true, false, 'status_'],
+        ['autor',            $this->Translate('Range for automation, 0.0 means off - this sets the autor setting to 10 times this value'),          VARIABLETYPE_FLOAT,     '',                 false, true, 'status_'],
+        ['autot',            $this->Translate('Faikin auto mode target Temperature'),                                                               VARIABLETYPE_FLOAT,     'FAIKIN_Temp',      false, true, 'status_'],
+        ['auto0',            $this->Translate('Time to turn off HH:MM, 00:00 is dont turn off. This sets the auto0 setting'),                       VARIABLETYPE_STRING,    '',                 false, true, 'status_'],
+        ['auto1',            $this->Translate('Time to turn off HH:MM, 00:00 is dont turn off. This sets the auto1 setting'),                       VARIABLETYPE_STRING,    '',                 false, true, 'status_'],
+        ['autop',            $this->Translate('Faikin auto mode'),                                                                                  VARIABLETYPE_BOOLEAN,   '~Switch',          false, true, 'status_'],
+        ['autob',            $this->Translate('external BLE sensor ID'),                                                                            VARIABLETYPE_STRING,    '',                 false, false, 'status_'],
+        ['comfort',          $this->Translate('comfort airflow mode'),                                                                              VARIABLETYPE_BOOLEAN,   '~Switch',          true, false, 'status_'],
+        ['quiet',            $this->Translate('quiet outdoor unit'),                                                                                VARIABLETYPE_BOOLEAN,   '~Switch',          true, false, 'status_'],
+        ['sensor',           $this->Translate('intelligent eye sensor'),                                                                            VARIABLETYPE_BOOLEAN,   '~Switch',          true, false, 'status_'],
+        ['streamer',         $this->Translate('streamer'),                                                                                          VARIABLETYPE_BOOLEAN,   '~Switch',          true, false, 'status_'],
+        ['fanfreq',          $this->Translate('fanfreq'),                                                                                           VARIABLETYPE_FLOAT,     '',                 false, true, 'status_'],    
     
-];
+        ['ble',              "dummy",                                                                                                               VARIABLETYPE_FLOAT,     '',                 true, true, ''],
 
-$DPError = [
-    ['description',              $this->Translate('Error Description'),                                                                                                                    VARIABLETYPE_STRING, '',  false, false],
-    ['failed-set',              $this->Translate('Error by change setting'),                                                                                                                    VARIABLETYPE_STRING, '',  false, false],
+        ['ble_temp',         $this->Translate('external BLE sensor: temperature'),                                                                  VARIABLETYPE_FLOAT,     'FAIKIN_Temp',      true, false, 'status_'],
+        ['ble_hum',          $this->Translate('external BLE sensor: humidity'),                                                                     VARIABLETYPE_FLOAT,     '~Humidity.F',      true, false, 'status_'],
+        ['ble_bat',          $this->Translate('external BLE sensor: battery voltage'),                                                              VARIABLETYPE_INTEGER,   'FAIKIN_ext_Bat',   true, false, 'status_'],
+     
+        ['demand',           $this->Translate('demand'),                                                                                            VARIABLETYPE_INTEGER,   '~Intensity.100',   true, true, 'status_'],
+        ['anglev',           $this->Translate('anglev'),                                                                                            VARIABLETYPE_INTEGER,   '',                 true, true, 'status_'],
+        ['env',              $this->Translate('env'),                                                                                               VARIABLETYPE_FLOAT,     '~Temperature',     true, true, 'status_'],
+        ['ipv4',            $this->Translate('IP Address'),                                                                                         VARIABLETYPE_STRING,    '',                 false, false, 'status_'],
 
-];
+        ['id',              $this->Translate('UniqueID'),                                                                                           VARIABLETYPE_STRING,    '',                 false, true, 'state_'],
+        ['up',              $this->Translate('online'),                                                                                             VARIABLETYPE_BOOLEAN,   '~Switch',          false, true, 'state_'],
+        ['mem',             $this->Translate('memory used'),                                                                                        VARIABLETYPE_INTEGER,   '',                 false, true, 'state_'],
+        ['spi',             $this->Translate('spi'),                                                                                                VARIABLETYPE_INTEGER,   '',                 false, true, 'state_'],
 
-$DPUID = [
-    ['online',           $this->Translate('Faikin is Online'),                                                                                                                    VARIABLETYPE_BOOLEAN, '~Switch', false, true],
-    ['target',           $this->Translate('target temperature'),                                                                                                                 VARIABLETYPE_FLOAT, 'FAIKIN_Temp', false, true],
-    ['temp',             $this->Translate('Set Roomtemperature'),                                                                                                                 VARIABLETYPE_FLOAT, 'FAIKIN_Temp', false, true],
-    ['outside',          $this->Translate('Outside temperature'),                                                                                                                 VARIABLETYPE_FLOAT, '~Temperature', false, true],
-    ['liquid',           $this->Translate('Liquid coolant feed temperature'),                                                                                                     VARIABLETYPE_FLOAT, '~Temperature', false, true],
-   // ['fanrpm',           $this->Translate('Fanspeed in RPM'),                                                                                                                     VARIABLETYPE_INTEGER, 'FAIKIN_rpm', false, true],
-    ['mode',             $this->Translate('Mode'),                                                                                                                                VARIABLETYPE_INTEGER, 'FAIKIN_Mode', false, true],
-    ['fan',              $this->Translate('Fan Level'),                                                                                                                           VARIABLETYPE_INTEGER, 'FAIKIN_Fanlevel', false, true],    
-    ['swing',            $this->Translate('louvre swing'),                                                                                                                           VARIABLETYPE_INTEGER, '', false, true],    
-    ['comp',            $this->Translate('compressor utilization'),                                                                                                                           VARIABLETYPE_INTEGER, '~Intensity.100', false, true],
-    ['Wh',              $this->Translate('total consumption'),                                                                                                                     VARIABLETYPE_FLOAT, 'FAIKIN_kwh', false, true],    
-    ['fanfreq',              $this->Translate('fanfreq'),                                                                                                                     VARIABLETYPE_FLOAT, '', false, true],    
+        ['ssid',            $this->Translate('connected to SSID'),                                                                                  VARIABLETYPE_STRING,    '',                 false, true, 'state_'],
+        ['bssid',           $this->Translate('BBSid'),                                                                                              VARIABLETYPE_STRING,    '',                 false, true, 'state_'],
+        ['rssi',            $this->Translate('RSSi'),                                                                                               VARIABLETYPE_INTEGER,   '',                 false, true, 'state_'],
+        ['chan',            $this->Translate('Wifi Channel'),                                                                                       VARIABLETYPE_INTEGER,   '',                 false, true, 'state_'],
+        ['ipv4',            $this->Translate('IP Address'),                                                                                         VARIABLETYPE_STRING,    '',                 false, false, 'state_'],
+        ['app',             $this->Translate('App'),                                                                                                VARIABLETYPE_STRING,    '',                 false, true, 'state_'],
+        ['version',         $this->Translate('Version'),                                                                                            VARIABLETYPE_STRING,    '',                 false, true, 'state_'],
+        ['build-suffix',    $this->Translate('Firmwarebuild Suffix'),                                                                               VARIABLETYPE_STRING,    '',                 false, true, 'state_'],
+        ['build',           $this->Translate('Firmwarebuild'),                                                                                      VARIABLETYPE_STRING,    '',                 false, true, 'state_'],
+        ['flash',           $this->Translate('flash used'),                                                                                         VARIABLETYPE_INTEGER,   '',                 false, true, 'state_'],
+        ['rst',             $this->Translate('rst'),                                                                                                VARIABLETYPE_INTEGER,   '',                 false, true, 'state_'],
+
+        ['target',          $this->Translate('target temperature'),                                                                                 VARIABLETYPE_FLOAT,     'FAIKIN_Temp',      false, true, 'state_'],
+
+        ['date',            $this->Translate('Date'),                                                                                               VARIABLETYPE_STRING,    '',                 false, true, 'info_'],
+        ['project',         $this->Translate('Projectname'),                                                                                        VARIABLETYPE_STRING,    '',                 false, true, 'info_'],
+        ['time',            $this->Translate('Time'),                                                                                               VARIABLETYPE_STRING,    '',                 false, true, 'info_'],
+        ['up-to-date',      $this->Translate('Firmware is up to date'),                                                                             VARIABLETYPE_BOOLEAN,   '~Switch',          false, false, 'info_'],    
+        ['url',             $this->Translate('URL to look for an Update'),                                                                          VARIABLETYPE_STRING,    '',                 false, true, 'info_'],
+        ['version',         $this->Translate('Version'),                                                                                            VARIABLETYPE_STRING,    '',                 false, false, 'info_'],
+
+   //   ['webcontrol',	    $this->Translate('Webcontrol'),                                                                                         VARIABLETYPE_INTEGER, 'FAIKIN_Webcontrol', true, true, 'status_'],
+        ['ha',              $this->Translate('send Home-Assistant message via MQTT'),                                                               VARIABLETYPE_BOOLEAN,  '~Switch',          true, true, 'setting_'],
+        ['reporting',       $this->Translate('reporting state in seconds'),                                                                         VARIABLETYPE_INTEGER,  '',                 true, true, 'setting_'],
+        ['dark',            $this->Translate('Shutdown LED'),                                                                                       VARIABLETYPE_BOOLEAN,  '~Switch',          true, false, 'setting_'],
+        ['livestatus',      $this->Translate('Live Status'),                                                                                        VARIABLETYPE_BOOLEAN,  '~Switch',          true, true, 'setting_'],
+//      ['tmin',            $this->Translate('Min temperature'),                                                                                                                   VARIABLETYPE_FLOAT, '~Temperature', true, true, 'status_'],
+//      ['tmax',            $this->Translate('Max temperature'),                                                                                                                      VARIABLETYPE_FLOAT, '~Temperature', true, true, 'status_'],
+//      ['otahost',         $this->Translate('OTA URL'),                                                                                                                                VARIABLETYPE_STRING, '', true, true, 'status_'],
+//      ['otaauto',     	$this->Translate('OTA Autoupdate'),                                                                                                                      VARIABLETYPE_INTEGER, '', true, true, 'status_'],
+//      ['prefixhost',      $this->Translate('prefixhost'),                                                                                                 VARIABLETYPE_BOOLEAN, '~Switch', false, true, 'status_'],
+    
+        ['description',     $this->Translate('Error Description'),                                                                                  VARIABLETYPE_STRING,    '',                 false, false, 'error_'],
+        ['failed-set',      $this->Translate('Error by change setting'),                                                                            VARIABLETYPE_STRING,    '',                 false, false, 'error_'],
 
 ];

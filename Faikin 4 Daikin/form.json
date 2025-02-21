@@ -57,6 +57,10 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "TestCenter",
+            "visible":false
         }
     ],
     "status": []

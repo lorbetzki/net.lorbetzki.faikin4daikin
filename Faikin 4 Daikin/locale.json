@@ -98,7 +98,12 @@
             "external BLE sensor: temperature":"externer BLE Sensor: Temperatur",
             "external BLE sensor: humidity":"externer BLE Sensor: Luftfeuchtigkeit",
             "external BLE sensor: battery voltage":"externer BLE Sensor: Batterie",
-            "not available": "nicht verfügbar"
+            "not available": "nicht verfügbar",
+            "Firmware is up to date": "Firmware aktuell",
+            "anglev": "Lamellenwinkel",
+            "demand": "Bedarfssteuerung",
+            "Faikin auto mode target Temperature":"Faikin Auto-Modus Zieltemperatur",
+            "Faikin auto mode": "Faikin Auto-Modus"
         }
     }
 }
