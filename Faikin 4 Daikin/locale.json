@@ -17,10 +17,10 @@
             "vertical louvre swing": "vertikale Lamellenschwenkung",
             "Ecomode": "Eco Modus",
             "powerfull mode": "Leistungsstarker Modus",
-            "Range for automation, 0.0 means off - this sets the autor setting to 10 times this value": "Bereich für die Automatisierung, 0.0 bedeutet aus - dies setzt die Autoreinstellung auf das 10-fache dieses Wertes",
-            "Target temp for automation, This sets the autot setting to 10 times this value": "Zieltemperatur für die Automatisierung, damit wird die automatische Einstellung auf das 10-fache dieses Wertes gesetzt",
-            "Time to turn off HH:MM, 00:00 is dont turn off. This sets the auto0 setting": "Zeit zum Ausschalten HH:MM, 00:00 ist nicht ausschalten. Damit wird die Einstellung auto0 festgelegt",
-            "Time to turn off HH:MM, 00:00 is dont turn off. This sets the auto1 setting": "Zeit zum Ausschalten HH:MM, 00:00 ist nicht ausschalten. Damit wird die Einstellung auto1 festgelegt",
+            "Automode: Range for automation": "Automode: Bereich für die Automatisierung",
+            "Automode: Target temp for automation, This sets the autot setting to 10 times this value": "Zieltemperatur für die Automatisierung, damit wird die automatische Einstellung auf das 10-fache dieses Wertes gesetzt",
+            "Automode: Offtimer": "Automode: Ausschaltzeit",
+            "Automode: Ontimer": "Automode: Einschaltzeit",
             "if we automatically turn on/off power based on temperature": "wenn wir den Strom je nach Temperatur automatisch ein- und ausschalten",
             "Timestamp": "Zeitstempel",
             "UniqueID": "Eindeutige ID",
@@ -94,16 +94,17 @@
             "Live Status": "Live Status",
             "total consumption":"Gesamtverbrauch",
             "receive Live status messages from all variable":"Live-Statusmeldungen von allen Variablen empfangen",
-            "external BLE sensor ID":"externer BLE Sensor ID",
-            "external BLE sensor: temperature":"externer BLE Sensor: Temperatur",
-            "external BLE sensor: humidity":"externer BLE Sensor: Luftfeuchtigkeit",
-            "external BLE sensor: battery voltage":"externer BLE Sensor: Batterie",
+            "ext. BLE sensor ID":"ext. BLE Sensor: ID",
+            "ext. BLE sensor: temperature":"ext. BLE Sensor: Temperatur",
+            "ext. BLE sensor: humidity":"ext. BLE Sensor: Luftfeuchtigkeit",
+            "ext. BLE sensor: battery voltage":"ext. BLE Sensor: Batterie",
             "not available": "nicht verfügbar",
             "Firmware is up to date": "Firmware aktuell",
             "anglev": "Lamellenwinkel",
             "demand": "Bedarfssteuerung",
-            "Faikin auto mode target Temperature":"Faikin Auto-Modus Zieltemperatur",
-            "Faikin auto mode": "Faikin Auto-Modus"
+            "Automode: Faikin auto mode target Temperature":"Automode: Faikin Auto-Modus Zieltemperatur",
+            "Automode: Faikin auto mode": "Automode: Faikin Auto-Modus",
+            "off":"aus"
         }
     }
 }

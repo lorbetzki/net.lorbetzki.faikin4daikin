@@ -54,6 +54,15 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			$this->RegisterProfileInteger("FAIKIN_ext_Bat", "", "", " mV",0,3100,0);
 
 			$this->RegisterProfileFloat("FAIKIN_Temp", "Temperature", "", " °C", 10, 32, 0.5, 1);
+
+		//	$this->RegisterProfileEx(VARIABLETYPE_FLOAT, $Name, $Icon, $Prefix, $Suffix, $Associations, $MaxValue, $StepSize, $Digits);
+
+			$this->RegisterProfileFloatEx("FAIKIN_Autor", "Temperature", "", "", [
+				['0', $this->Translate('off'),  '', 0x00FF00],
+				['0.5', "%d °C",  '', 0x00FF00],
+				['1', "%d °C",  '', 0x00FF00],
+				['2', "%d °C",  '', 0x00FF00],
+			], 2, 0.5,2);
 			$this->RegisterVariableBoolean('silentModeOnStart', $this->Translate('Set fanstate to silent on start'),'~Switch',90);
 			$this->EnableAction('silentModeOnStart', );
 		}
@@ -158,6 +167,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$DP_Action = $Datapoint['4'];
 					$DP_Hide = $Datapoint['5'];
 					$DP_IdentPrefix  = $Datapoint['6'];
+					$DP_Position  = $Datapoint['7'];
 
 					// when we receive the UID from the state/$hostname topic, write it to the attribute
 					if (($DP_Path == "id"))
@@ -185,13 +195,13 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 
 								if ((!@$this->GetIDForIdent('status_ble_temp')) or (!@$this->GetIDForIdent('status_ble_hum')) or (!@$this->GetIDForIdent('status_ble_bat')) )
 								{
-									$this->MaintainVariable('status_ble_temp', $this->Translate('external BLE sensor: temperature'), VARIABLETYPE_FLOAT, 'FAIKIN_Temp', 10, true); 
+									$this->MaintainVariable('status_ble_temp', $this->Translate('ext. BLE sensor: temperature'), VARIABLETYPE_FLOAT, 'FAIKIN_Temp', 90, true); 
 									$this->SendDebug(__FUNCTION__,"Create Variable with IDENT status_ble_temp", 0);
 
-									$this->MaintainVariable('status_ble_hum', $this->Translate('external BLE sensor: humidity'), VARIABLETYPE_FLOAT, '~Humidity.F', 10, true); 
+									$this->MaintainVariable('status_ble_hum', $this->Translate('ext. BLE sensor: humidity'), VARIABLETYPE_FLOAT, '~Humidity.F', 90, true); 
 									$this->SendDebug(__FUNCTION__,"Create Variable with IDENT status_ble_hum", 0);
 
-									$this->MaintainVariable('status_ble_bat', $this->Translate('external BLE sensor: battery voltage'), VARIABLETYPE_INTEGER, 'FAIKIN_ext_Bat', 10, true); 
+									$this->MaintainVariable('status_ble_bat', $this->Translate('ext. BLE sensor: battery voltage'), VARIABLETYPE_INTEGER, 'FAIKIN_ext_Bat', 90, true); 
 									$this->SendDebug(__FUNCTION__,"Create Variable with IDENT status_ble_bat", 0);
 
 								}
@@ -201,30 +211,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 								$this->SetValue("status_ble_hum", $DP_Value['hum']);
 								$this->SetValue("status_ble_bat", $DP_Value['bat']);
 							break;
-
-							case "autot":	// if autot
-								$this->SendDebug(__FUNCTION__,"Faikin auto temperature found, getting data", 0);
-
-								if ((!@$this->GetIDForIdent('status_autot')))
-								{
-									$this->MaintainVariable('status_autot', $this->Translate('Faikin auto mode target Temperature'), VARIABLETYPE_FLOAT, 'FAIKIN_Temp', 10, true); 
-									$this->SendDebug(__FUNCTION__,"Create Variable with IDENT status_autot", 0);
-								}
-								$this->SendDebug("Update Values for Faikin auto temperature :","Updating... ". $DP_Path . " ".json_encode($DP_Value), 0);
-								$this->SetValue("status_autot", $DP_Value);
-							break;
-
-							case "autop":	// if autop
-								$this->SendDebug(__FUNCTION__,"Faikin auto mode found, getting data", 0);
-
-								if ((!@$this->GetIDForIdent('status_autop')))
-								{
-									$this->MaintainVariable('status_autop', $this->Translate('Faikin auto mode'), VARIABLETYPE_BOOLEAN, '~Switch', 10, true); 
-									$this->SendDebug(__FUNCTION__,"Create Variable with IDENT status_autop", 0);
-								}
-								$this->SendDebug("Update Values for Faikin auto mode:","Updating... ". $DP_Path . " ".json_encode($DP_Value), 0);
-								$this->SetValue("status_autop", $DP_Value);
-							break;
+						
 						}
 					}
 					
@@ -333,13 +320,17 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 										$DP_Value = $DP_Value;
 									}
 								break;
+								case "auto0":
+								case "auto1":									
+									$DP_Value = strtotime($DP_Value);
+								break;
 								
 							}
 								
 							if (!@$this->GetIDForIdent(''.$DP_Identname.''))
 							{
 
-								$this->MaintainVariable($DP_Identname, $this->Translate("$DP_Desc"), $DP_DataType, "$DP_Profile", 0, true); 
+								$this->MaintainVariable($DP_Identname, $this->Translate("$DP_Desc"), $DP_DataType, "$DP_Profile", $DP_Position, true); 
 								$this->SendDebug(__FUNCTION__,"Create Variable with IDENT ".$DP_Identname, 0);
 
 								if ($DP_Action)
@@ -552,7 +543,39 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$a = array("streamer" => $Value);
 					$this->sendMQTT($Topic, json_encode($a));
 					if ($StatusEmu){$this->SetValue($Ident,$Value);}
-				break;			
+				break;		
+			    case 'status_autot':
+					$Topic = 'command/'.$Hostname;
+					$a = array("autot" => $Value);
+					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
+				break;
+				case 'status_autop':
+					$Topic = 'command/'.$Hostname;
+					$a = array("autop" => $Value);
+					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
+				break;
+				case 'status_auto0':
+					$TimeStamp = date("H:i", $Value);
+					$Topic = 'command/'.$Hostname;
+					$a = array("auto0" => $TimeStamp);
+					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
+				break;
+				case 'status_auto1':
+					$TimeStamp = date("H:i", $Value);
+					$Topic = 'command/'.$Hostname;
+					$a = array("auto1" => $TimeStamp);
+					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
+				break;
+				case 'status_autor':
+					$Topic = 'command/'.$Hostname;
+					$a = array("autor" => $Value);
+					$this->sendMQTT($Topic, json_encode($a));
+					if ($StatusEmu){$this->SetValue($Ident,$Value);}
+				break;
 			}
 			
 		}
