@@ -13,15 +13,15 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 
 			$this->ConnectParent('{C6D2AEB3-6E1F-4B2E-8E69-3A1A00246850}'); //MQTT Server
 			$this->RegisterPropertyString('Hostname', '');
-			$this->RegisterPropertyBoolean('StatusEmu', 'true');
-			$this->RegisterAttributeInteger('setting_reporting', '60');
-			$this->RegisterAttributeBoolean('setting_ha', 'true');
-			$this->RegisterAttributeBoolean('silentModeOnStart', 'false');
+			$this->RegisterPropertyBoolean('StatusEmu', true);
+			$this->RegisterAttributeInteger('setting_reporting', 60);
+			$this->RegisterAttributeBoolean('setting_ha', true);
+			$this->RegisterAttributeBoolean('silentModeOnStart', false);
 			$this->RegisterAttributeString('state_id', '');
 			
-			$this->RegisterAttributeBoolean('setting_livestatus', 'false');
+			$this->RegisterAttributeBoolean('setting_livestatus', false);
 
-			$this->RegisterAttributeBoolean('ble_sensor_found', 'false');
+			$this->RegisterAttributeBoolean('ble_sensor_found', false);
 
 			$this->RegisterProfileInteger("FAIKIN_rpm", "", "", " rpm", 0, 0, 0);
 
@@ -86,8 +86,15 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 			// filtering UID or setting/UID or (info|state|Faikin|error|setting|event)/Hostname
 			//$this->SetReceiveDataFilter('.*(('.$UID.'|setting\/'.$UID.')|(info|state|Faikin|error|setting|event)\/'.$Hostname.').*');
 			
-			$this->SetReceiveDataFilter('.*('.$UID.'|'.$Hostname.').*');
-			
+			if(strlen($UID)==12) {
+				$this->SetReceiveDataFilter('.*('.$UID.'|'.$Hostname.').*');
+			} else {
+				$this->SendDebug(__FUNCTION__,"Clearing invalid id.", 0);
+				$this->WriteAttributeString('state_id','');
+				$this->SetReceiveDataFilter('.*('.$Hostname.').*');
+			}
+
+
 			if (($Hostname) AND $this->Getstatus() == 102)
 			{
 				$this->ReloadSettings();
@@ -172,10 +179,11 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					// when we receive the UID from the state/$hostname topic, write it to the attribute
 					if (($DP_Path == "id"))
 					{
-						if (!$this->ReadAttributeString('state_id'))
+						$UID = $Payload['id'];
+						if (!$this->ReadAttributeString('state_id') && (strlen($UID)==12))
 							{
-							$this->SendDebug(__FUNCTION__,"Topic: ".$DP_Path." set id ".$DP_Value." as attribute.", 0);
-							$this->WriteAttributeString('state_id',"$DP_Value");
+							$this->SendDebug(__FUNCTION__,"Topic: ".$DP_Path." set id ".$UID." as attribute.", 0);
+							$this->WriteAttributeString('state_id',$UID);
 							}
 					}
 
