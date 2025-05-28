@@ -177,7 +177,7 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 					$DP_Position  = $Datapoint['7'];
 
 					// when we receive the UID from the state/$hostname topic, write it to the attribute
-					if (($DP_Path == "id"))
+					if (($DP_Path == "id") AND isset($Payload['id']))
 					{
 						$UID = $Payload['id'];
 						if (!$this->ReadAttributeString('state_id') && (strlen($UID)==12))
